@@ -12,19 +12,20 @@ const READY_STATES = {
 };
 
 let listenersAttached = false;
+let wasConnected = false;
+let closingDeliberately = false;
 
 function attachConnectionListeners() {
   if (listenersAttached) return;
   listenersAttached = true;
 
   const connection = mongoose.connection;
-  let wasConnected = false;
   connection.on('connected', () => {
     wasConnected = true;
   });
-  // Only report a disconnect after a successful connection, not during a failed first attempt.
+  // Only report unexpected drops: not a failed first attempt, not a deliberate shutdown.
   connection.on('disconnected', () => {
-    if (wasConnected) console.warn('[db] MongoDB disconnected');
+    if (wasConnected && !closingDeliberately) console.warn('[db] MongoDB disconnected');
   });
   connection.on('reconnected', () => console.log('[db] MongoDB reconnected'));
   connection.on('error', (error) => console.error(`[db] MongoDB error: ${describeConnectionError(error)}`));
@@ -60,7 +61,13 @@ export async function connectDatabase({ uri = env.MONGODB_URI, dbName = env.MONG
 
 export async function disconnectDatabase() {
   if (mongoose.connection.readyState !== 0) {
-    await mongoose.disconnect();
+    closingDeliberately = true;
+    try {
+      await mongoose.disconnect();
+    } finally {
+      closingDeliberately = false;
+      wasConnected = false;
+    }
   }
 }
 
@@ -91,6 +98,11 @@ export function describeConnectionError(error) {
   }
   if (/Invalid scheme|Invalid connection string|URI malformed|must start with/i.test(message)) {
     return 'MONGODB_URI is not a valid connection string. Copy it again from Atlas → Connect → Drivers.';
+  }
+  // Atlas rejects connections from IPs that are not in its access list during the
+  // TLS handshake ("tlsv1 alert internal error", SSL alert 80).
+  if (/SSL routines|tlsv1 alert|SSL alert number 80/i.test(message) || error?.name === 'MongoNetworkError') {
+    return 'Atlas refused the connection: add your current IP address in Atlas → Security → Database & Network Access → IP Access List. On mobile or CGNAT networks your public IP can change between connections.';
   }
   if (error?.name === 'MongooseServerSelectionError' || /Server selection timed out|ECONNREFUSED|ETIMEDOUT/i.test(message)) {
     return 'Could not reach the cluster: your current IP address is probably not in the Atlas Network Access list, or a firewall is blocking port 27017.';

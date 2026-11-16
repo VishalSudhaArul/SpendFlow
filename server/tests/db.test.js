@@ -12,6 +12,7 @@ describe('database connection helpers', () => {
     [{ message: 'querySrv ENOTFOUND _mongodb._tcp.cluster0.abc.mongodb.net' }, /resolve the cluster address/],
     [{ name: 'MongooseServerSelectionError', message: 'Server selection timed out after 10000 ms' }, /Network Access/],
     [{ message: 'Invalid scheme, expected connection string to start with "mongodb://"' }, /not a valid connection string/],
+    [{ name: 'MongoNetworkError', message: 'ssl3_read_bytes:tlsv1 alert internal error: SSL alert number 80' }, /IP Access List/],
     [{ name: 'WeirdError', message: 'something else' }, /Database connection failed \(WeirdError\)/],
   ])('maps driver errors to actionable messages (%#)', (error, expected) => {
     expect(describeConnectionError(error)).toMatch(expected);
