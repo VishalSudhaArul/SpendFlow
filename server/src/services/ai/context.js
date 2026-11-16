@@ -12,9 +12,10 @@ import { categoryMonthMatrix } from '../analyticsData.js';
 import { IncomeSource } from '../../models/IncomeSource.js';
 import { monthlyEquivalent } from '../incomeService.js';
 import { shiftMonth } from '../finance/planning.js';
-import { roundMoney } from '../../utils/money.js';
 
-const r = (value) => (value === null || value === undefined ? null : roundMoney(value));
+// The AI gets whole-unit amounts: paise add noise, not insight, and models
+// tend to repeat whatever precision they are given.
+const r = (value) => (value === null || value === undefined ? null : Math.round(value));
 
 export async function buildFinancialContext(user) {
   const userId = user._id;

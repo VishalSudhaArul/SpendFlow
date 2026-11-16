@@ -5,6 +5,10 @@
  *   returned by any endpoint and never sent to the browser.
  * - Prompts are never logged (they contain the user's financial summary).
  * - Every call has a timeout and returns parsed JSON validated by the caller.
+ * - Resilience: if the primary model is overloaded (503), rate-limited, slow
+ *   or missing, the call fails over to GEMINI_FALLBACK_MODEL, and the failing
+ *   model is skipped for a few minutes (circuit breaker) so users don't wait
+ *   on it again and again.
  */
 import { GoogleGenAI, ThinkingLevel } from '@google/genai';
 import { env } from '../../config/env.js';
@@ -17,7 +21,11 @@ export class AIUnavailableError extends Error {
   }
 }
 
+const COOLDOWN_MS = 5 * 60 * 1000;
+const RETRYABLE = new Set(['AI_TIMEOUT', 'AI_UNAVAILABLE', 'AI_RATE_LIMITED', 'AI_MODEL_NOT_FOUND', 'AI_EMPTY', 'AI_BAD_OUTPUT']);
+
 let client = null;
+const cooldownUntil = new Map(); // model -> timestamp
 
 function getClient() {
   if (!env.GEMINI_API_KEY) {
@@ -31,13 +39,24 @@ export function isAIConfigured() {
   return Boolean(env.GEMINI_API_KEY);
 }
 
+/** Models to try, in order, skipping ones that recently failed (unless all have). */
+export function modelOrder(now = Date.now()) {
+  const models = [...new Set([env.GEMINI_MODEL, env.GEMINI_FALLBACK_MODEL].filter(Boolean))];
+  const healthy = models.filter((m) => (cooldownUntil.get(m) ?? 0) <= now);
+  return healthy.length ? healthy : models;
+}
+
+export function _resetCooldowns() {
+  cooldownUntil.clear();
+}
+
 /** Maps SDK/network errors to a small set of codes without leaking details. */
-export function classifyError(error) {
+export function classifyError(error, model = env.GEMINI_MODEL) {
   if (error instanceof AIUnavailableError) return error;
   const status = error?.status;
   const message = String(error?.message ?? '');
 
-  if (error?.name === 'AbortError' || /aborted|timed? ?out/i.test(message)) {
+  if (error?.name === 'AbortError' || error?.name === 'TimeoutError' || /aborted|timed? ?out/i.test(message)) {
     return new AIUnavailableError('AI_TIMEOUT', 'The AI service took too long to respond');
   }
   if (status === 400 && /api[_ ]?key/i.test(message)) {
@@ -47,7 +66,7 @@ export function classifyError(error) {
     return new AIUnavailableError('AI_KEY_INVALID', 'The Gemini API key is not authorised for this model');
   }
   if (status === 404) {
-    return new AIUnavailableError('AI_MODEL_NOT_FOUND', `Gemini model "${env.GEMINI_MODEL}" is not available. Set GEMINI_MODEL in server/.env`);
+    return new AIUnavailableError('AI_MODEL_NOT_FOUND', `Gemini model "${model}" is not available`);
   }
   if (status === 429) {
     return new AIUnavailableError('AI_RATE_LIMITED', 'Gemini usage limit reached. Try again shortly');
@@ -55,18 +74,13 @@ export function classifyError(error) {
   return new AIUnavailableError('AI_UNAVAILABLE', 'The AI service is temporarily unavailable');
 }
 
-/**
- * Calls Gemini and returns the parsed JSON object.
- * `contents` is [{ role: 'user'|'model', text }].
- */
-export async function generateJson({ system, contents, schema, temperature = 0.3, maxOutputTokens = 2048, timeoutMs = 25_000 }) {
-  const ai = getClient();
+async function callModel(ai, model, { system, contents, schema, temperature, maxOutputTokens, timeoutMs }) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
 
   const request = (withThinking) =>
     ai.models.generateContent({
-      model: env.GEMINI_MODEL,
+      model,
       contents: contents.map((c) => ({ role: c.role, parts: [{ text: c.text }] })),
       config: {
         systemInstruction: system,
@@ -97,22 +111,48 @@ export async function generateJson({ system, contents, schema, temperature = 0.3
       throw new AIUnavailableError('AI_BAD_OUTPUT', 'The AI returned malformed output');
     }
   } catch (error) {
-    throw classifyError(error);
+    throw classifyError(error, model);
   } finally {
     clearTimeout(timer);
   }
 }
 
+/**
+ * Calls Gemini and returns the parsed JSON object, trying the primary model
+ * and then the fallback. `contents` is [{ role: 'user'|'model', text }].
+ * `timeoutMs` is the budget per model attempt.
+ */
+export async function generateJsonWithModel({ system, contents, schema, temperature = 0.3, maxOutputTokens = 2048, timeoutMs = 15_000 }) {
+  const ai = getClient();
+  let lastError;
+  for (const model of modelOrder()) {
+    try {
+      const data = await callModel(ai, model, { system, contents, schema, temperature, maxOutputTokens, timeoutMs });
+      cooldownUntil.delete(model);
+      return { data, model };
+    } catch (error) {
+      lastError = error;
+      if (!RETRYABLE.has(error.code)) throw error; // e.g. invalid key: another model won't help
+      cooldownUntil.set(model, Date.now() + COOLDOWN_MS);
+    }
+  }
+  throw lastError;
+}
+
+export async function generateJson(options) {
+  return (await generateJsonWithModel(options)).data;
+}
+
 /** Cheap connectivity check used by the status endpoint and `npm run ai:check`. */
 export async function pingGemini() {
   const started = performance.now();
-  const result = await generateJson({
+  const { data: result, model } = await generateJsonWithModel({
     system: 'You are a health check. Reply with JSON only.',
     contents: [{ role: 'user', text: 'Reply with {"ok": true}' }],
     schema: { type: 'object', properties: { ok: { type: 'boolean' } }, required: ['ok'] },
     temperature: 0,
     maxOutputTokens: 256,
-    timeoutMs: 20_000,
+    timeoutMs: 12_000,
   });
-  return { ok: result?.ok === true, latencyMs: Math.round(performance.now() - started), model: env.GEMINI_MODEL };
+  return { ok: result?.ok === true, latencyMs: Math.round(performance.now() - started), model };
 }

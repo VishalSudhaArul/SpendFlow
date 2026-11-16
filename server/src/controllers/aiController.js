@@ -4,13 +4,14 @@ import { env } from '../config/env.js';
 import { sendCreated, sendSuccess } from '../utils/response.js';
 
 export async function status(req, res) {
-  const result = { configured: coach.aiStatus().configured, model: env.GEMINI_MODEL };
+  const result = { configured: coach.aiStatus().configured, model: env.GEMINI_MODEL, fallbackModel: env.GEMINI_FALLBACK_MODEL };
   // Optional live check (rate-limited route). Reports only success/failure, never the key.
   if (req.query.check === 'true' && result.configured) {
     try {
       const ping = await pingGemini();
       result.reachable = ping.ok;
       result.latencyMs = ping.latencyMs;
+      result.answeredBy = ping.model;
     } catch (error) {
       result.reachable = false;
       result.error = { code: error.code ?? 'AI_UNAVAILABLE', message: error.message };

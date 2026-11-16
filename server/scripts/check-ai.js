@@ -13,10 +13,10 @@ async function main() {
     console.error('  Create a key at https://aistudio.google.com/app/apikey and paste it after GEMINI_API_KEY=');
     process.exit(1);
   }
-  console.log(`Checking Gemini (model: ${env.GEMINI_MODEL})...`);
+  console.log(`Checking Gemini (primary: ${env.GEMINI_MODEL}, fallback: ${env.GEMINI_FALLBACK_MODEL})...`);
   try {
     const result = await pingGemini();
-    console.log(`✔ Gemini responded in ${result.latencyMs} ms`);
+    console.log(`✔ Gemini (${result.model}) responded in ${result.latencyMs} ms`);
     process.exit(0);
   } catch (error) {
     console.error(`✖ ${error.message} [${error.code ?? 'ERROR'}]`);

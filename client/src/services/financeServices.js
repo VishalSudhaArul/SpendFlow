@@ -116,7 +116,7 @@ export const aiService = {
   removeConversation: (id) => request({ method: 'DELETE', url: `/ai/conversations/${id}` }),
   summary: (today, refresh = false) =>
     request({ method: 'GET', url: '/ai/summary', params: { today, ...(refresh ? { refresh: 'true' } : {}) }, timeout: 60_000 }),
-  parseTransaction: (text, today) => request({ method: 'POST', url: '/ai/parse-transaction', data: { text, today }, timeout: 30_000 }),
+  parseTransaction: (text, today) => request({ method: 'POST', url: '/ai/parse-transaction', data: { text, today }, timeout: 45_000 }),
 };
 
 export const incomeService = {

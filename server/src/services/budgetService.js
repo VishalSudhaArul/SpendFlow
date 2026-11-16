@@ -140,7 +140,7 @@ export async function upsertBudget(userId, { month, category = null, limit, aler
   return Budget.findOneAndUpdate(
     { userId, month, category },
     { $set: update, $setOnInsert: { userId, month, category } },
-    { upsert: true, new: true, runValidators: true },
+    { upsert: true, returnDocument: 'after', runValidators: true },
   );
 }
 

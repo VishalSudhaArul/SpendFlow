@@ -36,6 +36,8 @@ const envSchema = z.object({
   COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('lax'),
   GEMINI_API_KEY: optionalSecret,
   GEMINI_MODEL: z.string().trim().min(1).default('gemini-3.8-flash'),
+  // Used automatically when the primary model is overloaded, slow or unavailable.
+  GEMINI_FALLBACK_MODEL: z.string().trim().default('gemini-3.5-flash-lite'),
 });
 
 const parsed = envSchema.safeParse(process.env);
