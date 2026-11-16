@@ -6,7 +6,7 @@ import { cn } from '../../utils/cn.js';
  * Accessible modal built on the native <dialog> element, which provides
  * focus trapping, Escape-to-close and a backdrop for free.
  */
-export function Modal({ open, onClose, title, description, children, footer, className }) {
+export function Modal({ open, onClose, title, description, children, footer, className, size = 'md' }) {
   const ref = useRef(null);
   const titleId = useId();
   const descriptionId = useId();
@@ -32,7 +32,8 @@ export function Modal({ open, onClose, title, description, children, footer, cla
         if (event.target === ref.current) onClose?.();
       }}
       className={cn(
-        'm-auto w-[calc(100%-2rem)] max-w-lg rounded-2xl border border-border bg-surface p-0 text-text shadow-card',
+        'm-auto w-[calc(100%-2rem)] rounded-2xl border border-border bg-surface p-0 text-text shadow-card',
+        size === 'lg' ? 'max-w-2xl' : 'max-w-lg',
         className,
       )}
     >

@@ -9,6 +9,8 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Transactions from './pages/Transactions.jsx';
 import Income from './pages/Income.jsx';
+import Budgets from './pages/Budgets.jsx';
+import Goals from './pages/Goals.jsx';
 import Profile from './pages/Profile.jsx';
 import SystemStatus from './pages/SystemStatus.jsx';
 import NotFound from './pages/NotFound.jsx';
@@ -33,6 +35,8 @@ export default function App() {
                   <Route index element={<Navigate to="/transactions" replace />} />
                   <Route path="transactions" element={<Transactions />} />
                   <Route path="income" element={<Income />} />
+                  <Route path="budgets" element={<Budgets />} />
+                  <Route path="goals" element={<Goals />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="status" element={<SystemStatus />} />
                 </Route>

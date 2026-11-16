@@ -1,4 +1,4 @@
-import { Activity, ArrowLeftRight, HandCoins, UserRound } from 'lucide-react';
+import { Activity, ArrowLeftRight, HandCoins, PiggyBank, UserRound, WalletCards } from 'lucide-react';
 
 /**
  * Sidebar sections. A module is added here only when its page and API exist,
@@ -10,6 +10,13 @@ export const NAV_SECTIONS = [
     items: [
       { to: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
       { to: '/income', label: 'Income', icon: HandCoins },
+    ],
+  },
+  {
+    label: 'Plan',
+    items: [
+      { to: '/budgets', label: 'Budgets', icon: WalletCards },
+      { to: '/goals', label: 'Savings goals', icon: PiggyBank },
     ],
   },
   {

@@ -58,6 +58,28 @@ export const transactionService = {
   },
 };
 
+export const budgetService = {
+  overview: (month) => request({ method: 'GET', url: '/budgets', params: { month } }),
+  recommendations: (month) => request({ method: 'GET', url: '/budgets/recommendations', params: { month } }),
+  fiftyThirtyTwenty: (month, income) =>
+    request({ method: 'GET', url: '/budgets/fifty-thirty-twenty', params: toQueryParams({ month, income }) }),
+  save: (data) => request({ method: 'POST', url: '/budgets', data }).then((d) => d.budget),
+  update: (id, data) => request({ method: 'PATCH', url: `/budgets/${id}`, data }).then((d) => d.budget),
+  remove: (id) => request({ method: 'DELETE', url: `/budgets/${id}` }),
+  bulk: (month, items) => request({ method: 'POST', url: '/budgets/bulk', data: { month, items } }),
+  copy: (fromMonth, toMonth) => request({ method: 'POST', url: '/budgets/copy', data: { fromMonth, toMonth } }),
+};
+
+export const goalService = {
+  list: () => request({ method: 'GET', url: '/goals' }),
+  create: (data) => request({ method: 'POST', url: '/goals', data }).then((d) => d.goal),
+  update: (id, data) => request({ method: 'PATCH', url: `/goals/${id}`, data }).then((d) => d.goal),
+  remove: (id) => request({ method: 'DELETE', url: `/goals/${id}` }),
+  contribute: (id, data) => request({ method: 'POST', url: `/goals/${id}/contributions`, data }),
+  removeContribution: (id, contributionId) =>
+    request({ method: 'DELETE', url: `/goals/${id}/contributions/${contributionId}` }).then((d) => d.goal),
+};
+
 export const incomeService = {
   listSources: () => request({ method: 'GET', url: '/income/sources' }).then((d) => d.items),
   createSource: (data) => request({ method: 'POST', url: '/income/sources', data }).then((d) => d.source),
