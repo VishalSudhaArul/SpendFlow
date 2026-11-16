@@ -7,6 +7,11 @@ export default defineConfig({
     env: {
       NODE_ENV: 'test',
       CLIENT_URL: 'http://localhost:5173',
+      // Tests must never touch the developer's real Atlas cluster or API keys from server/.env.
+      // (dotenv never overrides variables that are already set.)
+      MONGODB_URI: '',
+      JWT_SECRET: '',
+      GEMINI_API_KEY: '',
     },
   },
 });
