@@ -7,6 +7,7 @@ import userRoutes from './userRoutes.js';
 import transactionRoutes from './transactionRoutes.js';
 import incomeRoutes from './incomeRoutes.js';
 import { budgetRoutes, goalRoutes } from './planningRoutes.js';
+import { analyticsRoutes, dashboardRoutes } from './analyticsRoutes.js';
 
 const router = Router();
 
@@ -18,5 +19,7 @@ router.use('/transactions', transactionRoutes);
 router.use('/income', incomeRoutes);
 router.use('/budgets', budgetRoutes);
 router.use('/goals', goalRoutes);
+router.use('/dashboard', dashboardRoutes);
+router.use('/analytics', analyticsRoutes);
 
 export default router;
