@@ -186,6 +186,9 @@ export async function getDashboard(userId) {
       avgDailySpend: pace.daysElapsed ? roundMoney((thisMonth.expense - fixedSpentThisMonth) / pace.daysElapsed) : null,
     },
     incomeVsExpense: trend,
+    thisMonthByCategory: [...thisMonthByCategory.entries()]
+      .map(([category, v]) => ({ category, spent: v.total, count: v.count }))
+      .sort((a, b) => b.spent - a.spent),
     monthComparison: {
       throughDay: pace.daysElapsed,
       currentTotal: thisMonth.expense,
@@ -195,7 +198,8 @@ export async function getDashboard(userId) {
     recentTransactions: recent,
     budgets: {
       overall: budgets.overall,
-      categories: budgets.categories.slice(0, 5),
+      // Full list: the dashboard UI shows the first few, the AI coach needs all of them.
+      categories: budgets.categories,
       alertCount: budgets.alerts.length,
     },
     goals: goalViews

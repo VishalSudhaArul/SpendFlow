@@ -35,6 +35,7 @@ const envSchema = z.object({
   // under the frontend's domain). Use "none" only if they live on different sites.
   COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('lax'),
   GEMINI_API_KEY: optionalSecret,
+  GEMINI_MODEL: z.string().trim().min(1).default('gemini-3.8-flash'),
 });
 
 const parsed = envSchema.safeParse(process.env);

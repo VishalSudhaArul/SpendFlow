@@ -9,7 +9,8 @@ export async function list(req, res) {
 }
 
 export async function create(req, res) {
-  const transaction = await transactions.createTransaction(req.userId, req.body);
+  const { origin, ...data } = req.body;
+  const transaction = await transactions.createTransaction(req.userId, data, { origin });
   sendCreated(res, { transaction });
 }
 

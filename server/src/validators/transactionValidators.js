@@ -31,7 +31,12 @@ function categoryMatchesType(data, ctx) {
   }
 }
 
-export const createTransactionSchema = z.object(baseFields).superRefine(categoryMatchesType);
+export const createTransactionSchema = z
+  .object({
+    ...baseFields,
+    // 'ai' marks a transaction the user confirmed from a natural-language preview.
+    origin: z.enum(['manual', 'ai']).default('manual'),
+  }).superRefine(categoryMatchesType);
 
 // Partial update. Type/category consistency is re-checked in the service against the stored record.
 export const updateTransactionSchema = z
