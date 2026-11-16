@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
+import { BrowserRouter, Route, Routes } from 'react-router';
 import { ThemeProvider } from './context/ThemeProvider.jsx';
 import { ToastProvider } from './context/ToastProvider.jsx';
 import { AuthProvider } from './context/AuthProvider.jsx';
@@ -7,6 +7,8 @@ import { AppLayout } from './layouts/AppLayout.jsx';
 import { AuthLayout } from './layouts/AuthLayout.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
+import Dashboard from './pages/Dashboard.jsx';
+import Analytics from './pages/Analytics.jsx';
 import Transactions from './pages/Transactions.jsx';
 import Income from './pages/Income.jsx';
 import Budgets from './pages/Budgets.jsx';
@@ -31,8 +33,8 @@ export default function App() {
 
               <Route element={<RequireAuth />}>
                 <Route element={<AppLayout />}>
-                  {/* "/" becomes the dashboard in Phase 7. */}
-                  <Route index element={<Navigate to="/transactions" replace />} />
+                  <Route index element={<Dashboard />} />
+                  <Route path="analytics" element={<Analytics />} />
                   <Route path="transactions" element={<Transactions />} />
                   <Route path="income" element={<Income />} />
                   <Route path="budgets" element={<Budgets />} />

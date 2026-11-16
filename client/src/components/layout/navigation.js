@@ -1,10 +1,18 @@
-import { Activity, ArrowLeftRight, HandCoins, PiggyBank, UserRound, WalletCards } from 'lucide-react';
+import { Activity, ArrowLeftRight, BarChart3, HandCoins, LayoutDashboard, PiggyBank, UserRound, WalletCards } from 'lucide-react';
 
 /**
  * Sidebar sections. A module is added here only when its page and API exist,
  * so the navigation never links to unfinished features.
+ * `exact` items match only their own path (the dashboard lives at "/").
  */
 export const NAV_SECTIONS = [
+  {
+    label: 'Overview',
+    items: [
+      { to: '/', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+      { to: '/analytics', label: 'Analytics', icon: BarChart3 },
+    ],
+  },
   {
     label: 'Money',
     items: [

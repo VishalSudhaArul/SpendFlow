@@ -8,7 +8,7 @@ import { NAV_SECTIONS } from '../components/layout/navigation.js';
 function useCurrentTitle() {
   const { pathname } = useLocation();
   for (const section of NAV_SECTIONS) {
-    const match = section.items.find((item) => pathname.startsWith(item.to));
+    const match = section.items.find((item) => (item.exact ? pathname === item.to : pathname.startsWith(item.to)));
     if (match) return match.label;
   }
   return 'SpendFlow AI';

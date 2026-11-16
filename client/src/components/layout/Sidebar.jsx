@@ -15,10 +15,11 @@ export function SidebarContent({ onNavigate }) {
           <div key={section.label} className="mb-6">
             <p className="px-3 pb-2 text-[11px] font-semibold tracking-[0.12em] text-muted uppercase">{section.label}</p>
             <ul className="space-y-1">
-              {section.items.map(({ to, label, icon: Icon }) => (
+              {section.items.map(({ to, label, icon: Icon, exact }) => (
                 <li key={to}>
                   <NavLink
                     to={to}
+                    end={exact}
                     onClick={onNavigate}
                     className={({ isActive }) =>
                       cn(

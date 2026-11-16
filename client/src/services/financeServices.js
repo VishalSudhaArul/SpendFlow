@@ -80,6 +80,33 @@ export const goalService = {
     request({ method: 'DELETE', url: `/goals/${id}/contributions/${contributionId}` }).then((d) => d.goal),
 };
 
+export const dashboardService = {
+  get: () => request({ method: 'GET', url: '/dashboard' }),
+};
+
+export const analyticsService = {
+  overview: (params) => request({ method: 'GET', url: '/analytics/overview', params: toQueryParams(params) }),
+  heatmap: (days = 365) => request({ method: 'GET', url: '/analytics/heatmap', params: { days } }),
+  unusual: (days = 90) => request({ method: 'GET', url: '/analytics/unusual', params: { days } }),
+  cashflow: (months = 6) => request({ method: 'GET', url: '/analytics/cashflow', params: { months } }),
+  async downloadReport(params) {
+    const response = await api.get('/analytics/report', { params: toQueryParams(params), responseType: 'blob', timeout: 60_000 });
+    const filename = /filename="([^"]+)"/.exec(response.headers['content-disposition'] ?? '')?.[1] ?? 'spendflow-report.csv';
+    saveBlob(response.data, filename);
+  },
+};
+
+function saveBlob(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 export const incomeService = {
   listSources: () => request({ method: 'GET', url: '/income/sources' }).then((d) => d.items),
   createSource: (data) => request({ method: 'POST', url: '/income/sources', data }).then((d) => d.source),
