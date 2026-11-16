@@ -5,7 +5,13 @@ const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 export const api = axios.create({
   baseURL,
   timeout: 20_000,
-  headers: { 'Content-Type': 'application/json' },
+  // The session lives in an httpOnly cookie, so the browser must send cookies.
+  withCredentials: true,
+  headers: {
+    'Content-Type': 'application/json',
+    // Required by the API's CSRF guard on state-changing requests.
+    'X-Requested-With': 'SpendFlow',
+  },
 });
 
 /**
@@ -35,9 +41,24 @@ export function toApiError(error) {
   };
 }
 
+// Lets the auth layer react when any request finds the session has expired.
+const unauthorizedListeners = new Set();
+export function onUnauthorized(listener) {
+  unauthorizedListeners.add(listener);
+  return () => unauthorizedListeners.delete(listener);
+}
+
 api.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(toApiError(error)),
+  (error) => {
+    const apiError = toApiError(error);
+    const url = error?.config?.url ?? '';
+    // A 401 from login itself just means wrong credentials, not an expired session.
+    if (apiError.status === 401 && !url.startsWith('/auth/login')) {
+      unauthorizedListeners.forEach((listener) => listener(apiError));
+    }
+    return Promise.reject(apiError);
+  },
 );
 
 /** Unwraps the `data` field of a successful response. */

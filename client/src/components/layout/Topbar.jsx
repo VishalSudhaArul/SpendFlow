@@ -1,6 +1,7 @@
 import { Menu } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle.jsx';
 import { Logo } from './Logo.jsx';
+import { UserMenu } from './UserMenu.jsx';
 
 export function Topbar({ title, onOpenMenu }) {
   return (
@@ -20,6 +21,7 @@ export function Topbar({ title, onOpenMenu }) {
         <h1 className="hidden text-lg font-semibold lg:block">{title}</h1>
         <div className="ml-auto flex items-center gap-2">
           <ThemeToggle />
+          <UserMenu />
         </div>
       </div>
     </header>
