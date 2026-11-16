@@ -20,6 +20,7 @@ import { ProgressBar } from '../components/ui/ProgressBar.jsx';
 import { BudgetStatusBadge } from '../components/budgets/BudgetStatus.jsx';
 import { HealthScoreCard } from '../components/dashboard/HealthScoreCard.jsx';
 import { SafeToSpendCard } from '../components/dashboard/SafeToSpendCard.jsx';
+import { AISummaryCard } from '../components/dashboard/AISummaryCard.jsx';
 import { IncomeExpenseChart } from '../components/charts/IncomeExpenseChart.jsx';
 import { categoryIcon } from '../components/transactions/categoryStyles.js';
 import { GOAL_ICON_COMPONENTS } from '../components/goals/goalVisuals.js';
@@ -86,6 +87,8 @@ function DashboardContent({ data }) {
 
   return (
     <>
+      <AISummaryCard />
+
       <section aria-label="Key figures" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <KpiTile icon={Landmark} label="Total balance" value={money(balance.balance, { decimals: 0 })} hint="All income minus all spending tracked" tone="accent" />
         <KpiTile icon={ArrowDownLeft} label="Income this month" value={money(thisMonth.income, { decimals: 0 })} hint={thisMonth.incomeExpected ? `+${money(thisMonth.incomeExpected, { decimals: 0 })} still expected` : 'All expected income received'} tone="success" />
@@ -250,7 +253,7 @@ function BudgetsCard({ budgets, money }) {
         />
       ) : (
         <ul className="space-y-4">
-          {list.map((b) => (
+          {list.slice(0, 6).map((b) => (
             <li key={b.id}>
               <div className="flex items-center justify-between gap-2 text-sm">
                 <span className="truncate font-medium">{b.category}</span>

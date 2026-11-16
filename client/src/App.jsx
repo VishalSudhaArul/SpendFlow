@@ -9,6 +9,7 @@ import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Analytics from './pages/Analytics.jsx';
+import AICoach from './pages/AICoach.jsx';
 import Transactions from './pages/Transactions.jsx';
 import Income from './pages/Income.jsx';
 import Budgets from './pages/Budgets.jsx';
@@ -35,6 +36,7 @@ export default function App() {
                 <Route element={<AppLayout />}>
                   <Route index element={<Dashboard />} />
                   <Route path="analytics" element={<Analytics />} />
+                  <Route path="coach" element={<AICoach />} />
                   <Route path="transactions" element={<Transactions />} />
                   <Route path="income" element={<Income />} />
                   <Route path="budgets" element={<Budgets />} />

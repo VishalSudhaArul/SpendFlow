@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowDownLeft, ArrowUpRight, Download, Plus, Receipt, Scale } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Download, Plus, Receipt, Scale, Sparkles } from 'lucide-react';
 import { Card } from '../components/ui/Card.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { EmptyState } from '../components/ui/EmptyState.jsx';
@@ -11,6 +11,7 @@ import { TransactionFilters } from '../components/transactions/TransactionFilter
 import { EMPTY_FILTERS } from '../components/transactions/filters.js';
 import { TransactionList, TransactionListSkeleton } from '../components/transactions/TransactionList.jsx';
 import { TransactionFormModal } from '../components/transactions/TransactionFormModal.jsx';
+import { QuickAddModal } from '../components/transactions/QuickAddModal.jsx';
 import { useAsync } from '../hooks/useAsync.js';
 import { useDebouncedValue } from '../hooks/useDebouncedValue.js';
 import { useMeta } from '../hooks/useMeta.js';
@@ -30,6 +31,7 @@ export default function Transactions() {
   const [page, setPage] = useState(1);
   const [reloadKey, setReloadKey] = useState(0);
   const [formState, setFormState] = useState({ open: false, transaction: null });
+  const [quickAddOpen, setQuickAddOpen] = useState(false);
   const [toDelete, setToDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
   const [exporting, setExporting] = useState(false);
@@ -82,10 +84,14 @@ export default function Transactions() {
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-muted">Every rupee in and out, searchable and filterable.</p>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button variant="secondary" onClick={handleExport} loading={exporting} disabled={!data?.meta?.total}>
             {!exporting && <Download className="size-4" aria-hidden="true" />}
             Export CSV
+          </Button>
+          <Button variant="secondary" onClick={() => setQuickAddOpen(true)}>
+            <Sparkles className="size-4 text-accent" aria-hidden="true" />
+            Quick add
           </Button>
           <Button onClick={() => setFormState({ open: true, transaction: null })} className="flex-1 sm:flex-none">
             <Plus className="size-4" aria-hidden="true" />
@@ -150,9 +156,20 @@ export default function Transactions() {
         </div>
       </Card>
 
+      <QuickAddModal
+        open={quickAddOpen}
+        onClose={() => setQuickAddOpen(false)}
+        onParsed={(draft, draftSource) => {
+          setQuickAddOpen(false);
+          setFormState({ open: true, transaction: null, draft, draftSource });
+        }}
+      />
+
       <TransactionFormModal
         open={formState.open}
         transaction={formState.transaction}
+        draft={formState.draft}
+        draftSource={formState.draftSource}
         meta={meta}
         onClose={() => setFormState({ open: false, transaction: null })}
         onSaved={() => setReloadKey((k) => k + 1)}

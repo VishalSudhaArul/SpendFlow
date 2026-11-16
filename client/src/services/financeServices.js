@@ -107,6 +107,18 @@ function saveBlob(blob, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+export const aiService = {
+  status: () => request({ method: 'GET', url: '/ai/status' }),
+  chat: (message, conversationId) =>
+    request({ method: 'POST', url: '/ai/chat', data: { message, ...(conversationId ? { conversationId } : {}) }, timeout: 60_000 }),
+  conversations: () => request({ method: 'GET', url: '/ai/conversations' }).then((d) => d.items),
+  conversation: (id) => request({ method: 'GET', url: `/ai/conversations/${id}` }).then((d) => d.conversation),
+  removeConversation: (id) => request({ method: 'DELETE', url: `/ai/conversations/${id}` }),
+  summary: (today, refresh = false) =>
+    request({ method: 'GET', url: '/ai/summary', params: { today, ...(refresh ? { refresh: 'true' } : {}) }, timeout: 60_000 }),
+  parseTransaction: (text, today) => request({ method: 'POST', url: '/ai/parse-transaction', data: { text, today }, timeout: 30_000 }),
+};
+
 export const incomeService = {
   listSources: () => request({ method: 'GET', url: '/income/sources' }).then((d) => d.items),
   createSource: (data) => request({ method: 'POST', url: '/income/sources', data }).then((d) => d.source),

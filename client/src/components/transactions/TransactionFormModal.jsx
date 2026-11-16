@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Sparkles } from 'lucide-react';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -27,7 +28,39 @@ const schema = z.object({
 
 const FIELDS = ['type', 'amount', 'category', 'description', 'paymentMethod', 'date', 'notes'];
 
-function initialValues(transaction, defaultType) {
+/** What the parser understood and assumed; nothing is saved until the user confirms. */
+function DraftNotice({ draft, source }) {
+  const low = draft.confidence < 0.7 || draft.missing?.length > 0;
+  return (
+    <div className={`rounded-xl border px-3.5 py-3 text-sm ${low ? 'border-warning/40 bg-warning/8' : 'border-accent/30 bg-accent-soft'}`}>
+      <p className="flex items-center gap-1.5 font-semibold">
+        <Sparkles className="size-4 text-accent" aria-hidden="true" />
+        {source === 'ai' ? 'Filled in by AI' : 'Filled in from your text'} — please check every field
+      </p>
+      {(draft.assumptions?.length > 0 || draft.missing?.length > 0) && (
+        <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-xs text-muted">
+          {draft.missing?.includes('amount') && <li className="font-medium text-warning">No amount found — please enter it.</li>}
+          {draft.assumptions?.map((a) => (
+            <li key={a}>{a}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+function initialValues(transaction, defaultType, draft) {
+  if (draft) {
+    return {
+      type: draft.type,
+      amount: draft.amount ?? '',
+      category: draft.category,
+      description: draft.description,
+      paymentMethod: draft.paymentMethod,
+      date: draft.date,
+      notes: '',
+    };
+  }
   if (transaction) {
     return {
       type: transaction.type,
@@ -51,10 +84,11 @@ function initialValues(transaction, defaultType) {
 }
 
 /**
- * Create or edit a transaction. Pass `transaction` to edit.
+ * Create or edit a transaction. Pass `transaction` to edit, or `draft` (from
+ * natural-language parsing) to review an AI-prepared transaction before saving.
  * Calls onSaved(savedTransaction) after a successful save.
  */
-export function TransactionFormModal({ open, onClose, transaction, defaultType = 'expense', meta, onSaved }) {
+export function TransactionFormModal({ open, onClose, transaction, draft, draftSource, defaultType = 'expense', meta, onSaved }) {
   const toast = useToast();
   const editing = Boolean(transaction);
 
@@ -66,11 +100,11 @@ export function TransactionFormModal({ open, onClose, transaction, defaultType =
     setValue,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm({ resolver: zodResolver(schema), defaultValues: initialValues(transaction, defaultType) });
+  } = useForm({ resolver: zodResolver(schema), defaultValues: initialValues(transaction, defaultType, draft) });
 
   useEffect(() => {
-    if (open) reset(initialValues(transaction, defaultType));
-  }, [open, transaction, defaultType, reset]);
+    if (open) reset(initialValues(transaction, defaultType, draft));
+  }, [open, transaction, defaultType, draft, reset]);
 
   const type = useWatch({ control, name: 'type' });
   const categories = meta?.categories?.[type] ?? [];
@@ -86,7 +120,7 @@ export function TransactionFormModal({ open, onClose, transaction, defaultType =
     try {
       const saved = editing
         ? await transactionService.update(transaction.id, values)
-        : await transactionService.create(values);
+        : await transactionService.create(draft ? { ...values, origin: 'ai' } : values);
       toast.success(editing ? 'Transaction updated' : `${values.type === 'income' ? 'Income' : 'Expense'} added`);
       onSaved?.(saved);
       onClose();
@@ -99,10 +133,11 @@ export function TransactionFormModal({ open, onClose, transaction, defaultType =
     <Modal
       open={open}
       onClose={isSubmitting ? undefined : onClose}
-      title={editing ? 'Edit transaction' : 'Add transaction'}
-      description={editing ? undefined : 'Record money going out or coming in.'}
+      title={editing ? 'Edit transaction' : draft ? 'Check before saving' : 'Add transaction'}
+      description={editing ? undefined : draft ? undefined : 'Record money going out or coming in.'}
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+        {draft && <DraftNotice draft={draft} source={draftSource} />}
         <SegmentedControl
           label="Transaction type"
           className="w-full"
