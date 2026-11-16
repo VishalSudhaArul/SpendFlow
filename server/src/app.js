@@ -2,6 +2,8 @@ import express from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import { csrfGuard } from './middleware/csrf.js';
 import { env } from './config/env.js';
 import apiRoutes from './routes/index.js';
 import { apiLimiter } from './middleware/rateLimiters.js';
@@ -29,21 +31,23 @@ export function createApp() {
         if (!origin || env.CLIENT_URL.includes(origin)) return callback(null, true);
         return callback(ApiError.forbidden('Origin not allowed by CORS'));
       },
+      credentials: true,
       methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
+      allowedHeaders: ['Content-Type', 'X-Requested-With'],
       exposedHeaders: ['Content-Disposition'],
       maxAge: 600,
     }),
   );
 
   app.use(express.json({ limit: '100kb' }));
+  app.use(cookieParser());
 
   if (!env.isTest) {
     // Logs method, path, status and timing only. No bodies, no auth headers.
     app.use(morgan(env.isProduction ? 'combined' : 'dev'));
   }
 
-  app.use('/api', apiLimiter, apiRoutes);
+  app.use('/api', apiLimiter, csrfGuard, apiRoutes);
 
   app.use(notFound);
   app.use(errorHandler);

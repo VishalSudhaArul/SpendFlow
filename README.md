@@ -47,7 +47,9 @@ The web app runs at http://localhost:5173 and the API at http://localhost:5000/a
 | Command          | What it does |
 |------------------|--------------|
 | `npm run lint`   | ESLint for server and client |
-| `npm test`       | Backend test suite (Vitest + Supertest) |
+| `npm test`       | Backend unit tests (Vitest + Supertest), no database needed |
+| `npm run test:integration --prefix server` | API tests against a throwaway `spendflow-ai-test` database on your Atlas cluster |
+| `npm run db:check --prefix server` | Verifies the MongoDB Atlas connection |
 | `npm run build`  | Production build of the client |
 
 ## Security notes

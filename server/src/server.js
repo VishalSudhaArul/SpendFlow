@@ -3,6 +3,11 @@ import { connectDatabase, disconnectDatabase } from './config/db.js';
 import { createApp } from './app.js';
 
 async function start() {
+  if (!env.JWT_SECRET) {
+    console.error('[config] JWT_SECRET is not set in server/.env. Authentication cannot work without it.');
+    process.exit(1);
+  }
+
   try {
     const connection = await connectDatabase();
     console.log(`[db] Connected to MongoDB Atlas (database: ${connection.name})`);

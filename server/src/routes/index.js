@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { getHealth } from '../controllers/healthController.js';
+import authRoutes from './authRoutes.js';
+import userRoutes from './userRoutes.js';
 
 const router = Router();
 
 router.get('/health', getHealth);
-
-// Feature routers are mounted here as each phase lands:
-// router.use('/auth', authRoutes);
-// router.use('/transactions', transactionRoutes);
+router.use('/auth', authRoutes);
+router.use('/users', userRoutes);
 
 export default router;
