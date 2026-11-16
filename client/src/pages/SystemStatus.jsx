@@ -1,4 +1,4 @@
-import { Bot, CheckCircle2, CircleDashed, Database, KeyRound, RotateCw, Server } from 'lucide-react';
+import { Bot, CheckCircle2, CircleDashed, Database, KeyRound, RotateCw, Server, XCircle } from 'lucide-react';
 import { Card, CardHeader } from '../components/ui/Card.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { Badge } from '../components/ui/Badge.jsx';
@@ -13,6 +13,16 @@ const INTEGRATIONS = [
   { key: 'auth', label: 'JWT authentication', hint: 'Set JWT_SECRET in server/.env', icon: KeyRound },
   { key: 'ai', label: 'Google Gemini', hint: 'Set GEMINI_API_KEY in server/.env', icon: Bot },
 ];
+
+const STATE_VIEW = {
+  connected: { label: 'Connected', tone: 'success', icon: CheckCircle2 },
+  configured: { label: 'Configured', tone: 'success', icon: CheckCircle2 },
+  connecting: { label: 'Connecting', tone: 'accent', icon: CircleDashed },
+  disconnected: { label: 'Disconnected', tone: 'danger', icon: XCircle },
+  disconnecting: { label: 'Disconnecting', tone: 'warning', icon: CircleDashed },
+  not_configured: { label: 'Not configured', tone: 'warning', icon: CircleDashed },
+  unknown: { label: 'Unknown', tone: 'neutral', icon: CircleDashed },
+};
 
 /**
  * Developer-facing page that checks the real API. It reports only whether each
@@ -74,7 +84,8 @@ export default function SystemStatus() {
         <ul className="divide-y divide-border">
           {INTEGRATIONS.map(({ key, label, hint, icon: Icon }) => {
             const state = data?.integrations?.[key];
-            const configured = state === 'configured';
+            const view = STATE_VIEW[state] ?? STATE_VIEW.unknown;
+            const configured = state === 'configured' || state === 'connected';
             return (
               <li key={key} className="flex items-center gap-4 py-3.5 first:pt-0 last:pb-0">
                 <div className="grid size-10 shrink-0 place-items-center rounded-xl bg-surface-2 text-muted">
@@ -86,13 +97,11 @@ export default function SystemStatus() {
                 </div>
                 {loading && !data ? (
                   <Skeleton className="h-6 w-24" />
-                ) : state ? (
-                  <Badge tone={configured ? 'success' : 'warning'} className="shrink-0">
-                    {configured ? <CheckCircle2 className="size-3.5" /> : <CircleDashed className="size-3.5" />}
-                    {configured ? 'Configured' : 'Not configured'}
-                  </Badge>
                 ) : (
-                  <Badge>Unknown</Badge>
+                  <Badge tone={view.tone} className="shrink-0">
+                    <view.icon className="size-3.5" aria-hidden="true" />
+                    {view.label}
+                  </Badge>
                 )}
               </li>
             );

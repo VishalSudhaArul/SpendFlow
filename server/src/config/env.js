@@ -21,7 +21,11 @@ const envSchema = z.object({
     // Allow a comma-separated list of origins, e.g. for a deployed frontend + localhost.
     .transform((value) => value.split(',').map((origin) => origin.trim()).filter(Boolean))
     .pipe(z.array(z.url({ message: 'CLIENT_URL must contain valid URLs' })).min(1)),
-  MONGODB_URI: optionalSecret,
+  MONGODB_URI: optionalSecret.refine(
+    (value) => value === undefined || /^mongodb(\+srv)?:\/\//.test(value),
+    'MONGODB_URI must start with mongodb+srv:// or mongodb://',
+  ),
+  MONGODB_DB_NAME: z.string().trim().min(1).default('spendflow-ai'),
   JWT_SECRET: optionalSecret,
   GEMINI_API_KEY: optionalSecret,
 });
