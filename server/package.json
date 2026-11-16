@@ -14,7 +14,8 @@
     "test": "vitest run",
     "lint": "eslint .",
     "db:check": "node scripts/check-db.js",
-    "test:integration": "vitest run --config vitest.integration.config.js"
+    "test:integration": "vitest run --config vitest.integration.config.js",
+    "seed": "node scripts/seed.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
