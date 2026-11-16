@@ -1,0 +1,113 @@
+@import 'tailwindcss';
+
+/* Class-based dark mode: <html class="dark"> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ---------- Design tokens ---------- */
+:root {
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface-2: #eef1f8;
+  --border: #dfe4ef;
+  --text: #0b1020;
+  --muted: #5a6479;
+  --accent: #3363f2;
+  --accent-2: #7246f0;
+  --accent-soft: rgb(51 99 242 / 0.1);
+  --success: #0f9a4b;
+  --warning: #b97400;
+  --danger: #d93a40;
+  --ring: rgb(51 99 242 / 0.45);
+  --shadow: 0 1px 2px rgb(15 23 42 / 0.05), 0 8px 24px -12px rgb(15 23 42 / 0.12);
+}
+
+.dark {
+  --bg: #060912;
+  --surface: #0c1220;
+  --surface-2: #121a2d;
+  --border: #1c2540;
+  --text: #e7ebf7;
+  --muted: #8a94ae;
+  --accent: #4d7cff;
+  --accent-2: #8b5cf6;
+  --accent-soft: rgb(77 124 255 / 0.14);
+  --success: #2fcf74;
+  --warning: #f2b33d;
+  --danger: #ff5c63;
+  --ring: rgb(77 124 255 / 0.55);
+  --shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.6);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-ring: var(--ring);
+  --shadow-card: var(--shadow);
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-bg text-text font-sans antialiased;
+    min-height: 100dvh;
+  }
+
+  /* Money and stats line up in columns. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+  }
+
+  dialog::backdrop {
+    background: rgb(3 6 14 / 0.6);
+    backdrop-filter: blur(4px);
+  }
+}
+
+/* ---------- Utilities ---------- */
+@utility glass {
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  backdrop-filter: blur(14px) saturate(140%);
+}
+
+@utility brand-gradient {
+  background-image: linear-gradient(135deg, var(--accent), var(--accent-2));
+}
+
+@utility brand-text {
+  background-image: linear-gradient(135deg, var(--accent), var(--accent-2));
+  background-clip: text;
+  color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
