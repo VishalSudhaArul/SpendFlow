@@ -7,6 +7,8 @@ import { AppLayout } from './layouts/AppLayout.jsx';
 import { AuthLayout } from './layouts/AuthLayout.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
+import Transactions from './pages/Transactions.jsx';
+import Income from './pages/Income.jsx';
 import Profile from './pages/Profile.jsx';
 import SystemStatus from './pages/SystemStatus.jsx';
 import NotFound from './pages/NotFound.jsx';
@@ -28,7 +30,9 @@ export default function App() {
               <Route element={<RequireAuth />}>
                 <Route element={<AppLayout />}>
                   {/* "/" becomes the dashboard in Phase 7. */}
-                  <Route index element={<Navigate to="/profile" replace />} />
+                  <Route index element={<Navigate to="/transactions" replace />} />
+                  <Route path="transactions" element={<Transactions />} />
+                  <Route path="income" element={<Income />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="status" element={<SystemStatus />} />
                 </Route>

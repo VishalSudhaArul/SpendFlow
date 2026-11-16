@@ -50,7 +50,16 @@ export function onUnauthorized(listener) {
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
+    // File downloads use responseType "blob", so JSON error bodies arrive as a Blob.
+    const data = error?.response?.data;
+    if (typeof Blob !== 'undefined' && data instanceof Blob && data.type.includes('json')) {
+      try {
+        error.response.data = JSON.parse(await data.text());
+      } catch {
+        // Leave it; toApiError falls back to a generic message.
+      }
+    }
     const apiError = toApiError(error);
     const url = error?.config?.url ?? '';
     // A 401 from login itself just means wrong credentials, not an expired session.

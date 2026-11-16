@@ -1,0 +1,52 @@
+import {
+  Banknote,
+  BookOpen,
+  Briefcase,
+  Bus,
+  CircleDollarSign,
+  Clapperboard,
+  CreditCard,
+  Gift,
+  HeartPulse,
+  Home,
+  Landmark,
+  Laptop,
+  Plane,
+  Receipt,
+  RefreshCw,
+  Repeat,
+  ShoppingBag,
+  ShoppingBasket,
+  Sparkles,
+  TrendingUp,
+  UtensilsCrossed,
+  Wallet,
+} from 'lucide-react';
+
+const ICONS = {
+  'Food & Dining': UtensilsCrossed,
+  Groceries: ShoppingBasket,
+  Transport: Bus,
+  Shopping: ShoppingBag,
+  'Bills & Utilities': Receipt,
+  'Rent & Housing': Home,
+  'Health & Fitness': HeartPulse,
+  Entertainment: Clapperboard,
+  Travel: Plane,
+  Education: BookOpen,
+  Subscriptions: Repeat,
+  'Personal Care': Sparkles,
+  'Gifts & Donations': Gift,
+  Investments: TrendingUp,
+  'EMI & Loans': CreditCard,
+  Salary: Briefcase,
+  Freelance: Laptop,
+  Business: Landmark,
+  Rental: Home,
+  Refund: RefreshCw,
+  Gift: Gift,
+};
+
+export function categoryIcon(category, type) {
+  return ICONS[category] ?? (type === 'income' ? Banknote : type === 'expense' ? Wallet : CircleDollarSign);
+}

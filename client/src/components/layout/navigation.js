@@ -1,10 +1,17 @@
-import { Activity, UserRound } from 'lucide-react';
+import { Activity, ArrowLeftRight, HandCoins, UserRound } from 'lucide-react';
 
 /**
  * Sidebar sections. A module is added here only when its page and API exist,
  * so the navigation never links to unfinished features.
  */
 export const NAV_SECTIONS = [
+  {
+    label: 'Money',
+    items: [
+      { to: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
+      { to: '/income', label: 'Income', icon: HandCoins },
+    ],
+  },
   {
     label: 'Account',
     items: [{ to: '/profile', label: 'Profile & security', icon: UserRound }],

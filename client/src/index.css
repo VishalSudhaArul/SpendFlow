@@ -19,6 +19,12 @@
   --danger: #d93a40;
   --ring: rgb(51 99 242 / 0.45);
   --shadow: 0 1px 2px rgb(15 23 42 / 0.05), 0 8px 24px -12px rgb(15 23 42 / 0.12);
+  /* Chart series (fixed order, validated for colour-vision deficiency on these surfaces) */
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --grid: #e6e9f0;
 }
 
 .dark {
@@ -36,6 +42,11 @@
   --danger: #ff5c63;
   --ring: rgb(77 124 255 / 0.55);
   --shadow: 0 1px 0 rgb(255 255 255 / 0.03) inset, 0 12px 32px -16px rgb(0 0 0 / 0.6);
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --grid: #1a2236;
 }
 
 @theme inline {

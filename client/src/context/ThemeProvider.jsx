@@ -8,14 +8,30 @@ function readInitialTheme() {
   return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
 }
 
+/**
+ * Applies the theme to <html> synchronously. This must happen before React
+ * re-renders, because charts read the CSS color variables during render.
+ */
+function applyTheme(theme) {
+  const root = document.documentElement;
+  root.classList.toggle('dark', theme === 'dark');
+  root.style.colorScheme = theme;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#060912' : '#f4f6fb');
+}
+
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(readInitialTheme);
+  const [theme, setThemeState] = useState(readInitialTheme);
+
+  const setTheme = useCallback((next) => {
+    applyTheme(next);
+    setThemeState(next);
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
+  }, [setTheme]);
 
   useEffect(() => {
-    const root = document.documentElement;
-    root.classList.toggle('dark', theme === 'dark');
-    root.style.colorScheme = theme;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#060912' : '#f4f6fb');
     try {
       localStorage.setItem(STORAGE_KEY, theme);
     } catch {
@@ -23,9 +39,7 @@ export function ThemeProvider({ children }) {
     }
   }, [theme]);
 
-  const toggleTheme = useCallback(() => setTheme((t) => (t === 'dark' ? 'light' : 'dark')), []);
-
-  const value = useMemo(() => ({ theme, setTheme, toggleTheme }), [theme, toggleTheme]);
+  const value = useMemo(() => ({ theme, setTheme, toggleTheme }), [theme, setTheme, toggleTheme]);
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
