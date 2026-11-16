@@ -6,6 +6,7 @@ import authRoutes from './authRoutes.js';
 import userRoutes from './userRoutes.js';
 import transactionRoutes from './transactionRoutes.js';
 import incomeRoutes from './incomeRoutes.js';
+import { budgetRoutes, goalRoutes } from './planningRoutes.js';
 
 const router = Router();
 
@@ -15,5 +16,7 @@ router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/transactions', transactionRoutes);
 router.use('/income', incomeRoutes);
+router.use('/budgets', budgetRoutes);
+router.use('/goals', goalRoutes);
 
 export default router;

@@ -52,6 +52,37 @@ export const FREQUENCY_PER_MONTH = {
   irregular: 0,
 };
 
+/**
+ * 50/30/20 rule buckets. "Needs" are essentials, "wants" are discretionary.
+ * Investments count toward the 20% savings bucket, not spending.
+ */
+export const NEEDS_CATEGORIES = [
+  'Rent & Housing',
+  'Groceries',
+  'Bills & Utilities',
+  'Transport',
+  'Health & Fitness',
+  'EMI & Loans',
+  'Education',
+];
+export const WANTS_CATEGORIES = [
+  'Food & Dining',
+  'Shopping',
+  'Entertainment',
+  'Travel',
+  'Subscriptions',
+  'Personal Care',
+  'Gifts & Donations',
+  'Other',
+];
+export const SAVINGS_CATEGORIES = ['Investments'];
+
+/**
+ * Categories normally paid once a month (not spread across days). Month-end
+ * projections count them as-is instead of extrapolating them.
+ */
+export const FIXED_CATEGORIES = ['Rent & Housing', 'EMI & Loans', 'Bills & Utilities', 'Subscriptions', 'Investments', 'Education'];
+
 export function categoriesFor(type) {
   return type === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
 }

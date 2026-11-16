@@ -13,8 +13,10 @@ import { connectDatabase, disconnectDatabase } from '../src/config/db.js';
 import { User } from '../src/models/User.js';
 import { Transaction } from '../src/models/Transaction.js';
 import { IncomeSource } from '../src/models/IncomeSource.js';
+import { Budget } from '../src/models/Budget.js';
+import { SavingsGoal } from '../src/models/SavingsGoal.js';
 import { hashPassword } from '../src/services/authService.js';
-import { addDaysUtc, addMonthsUtc, startOfMonthUtc, todayUtc } from '../src/utils/dates.js';
+import { addDaysUtc, addMonthsUtc, monthKey, startOfMonthUtc, todayUtc } from '../src/utils/dates.js';
 import { roundMoney } from '../src/utils/money.js';
 
 export const DEMO_EMAIL = 'demo@spendflow.test';
@@ -68,6 +70,8 @@ async function seed() {
     await Promise.all([
       Transaction.deleteMany({ userId: existing._id }),
       IncomeSource.deleteMany({ userId: existing._id }),
+      Budget.deleteMany({ userId: existing._id }),
+      SavingsGoal.deleteMany({ userId: existing._id }),
     ]);
     await existing.deleteOne();
   }
@@ -143,9 +147,47 @@ async function seed() {
   add({ type: 'expense', amount: 38999, category: 'Shopping', description: 'New smartphone', paymentMethod: 'Credit Card', date: unusualDate });
 
   await Transaction.insertMany(docs);
+
+  // Budgets for last month and this month (a few deliberately tight, so alerts show up).
+  const BUDGETS = [
+    [null, 72000],
+    ['Food & Dining', 6000],
+    ['Groceries', 7500],
+    ['Transport', 3500],
+    ['Shopping', 5000],
+    ['Entertainment', 2500],
+    ['Subscriptions', 800],
+  ];
+  for (const offset of [-1, 0]) {
+    const month = monthKey(addMonthsUtc(currentMonth, offset));
+    await Budget.insertMany(BUDGETS.map(([category, limit]) => ({ userId, month, category, limit })));
+  }
+
+  // Savings goals with a monthly contribution history.
+  const monthlyDeposits = (amount, months, note) =>
+    Array.from({ length: months }, (_, i) => ({
+      amount,
+      date: addDaysUtc(addMonthsUtc(currentMonth, -(months - 1 - i)), 4),
+      note,
+    })).filter((c) => c.date <= today);
+  const sum = (list) => list.reduce((total, c) => total + c.amount, 0);
+
+  const emergency = [{ amount: 40000, date: addMonthsUtc(currentMonth, -6), note: 'Starting balance' }, ...monthlyDeposits(8000, 6, 'Monthly transfer')];
+  const trip = monthlyDeposits(5000, 3, 'Trip fund');
+  const laptop = monthlyDeposits(3000, 2, '');
+  const bike = [{ amount: 18000, date: addMonthsUtc(currentMonth, -3), note: 'Saved up' }];
+
+  await SavingsGoal.create([
+    { userId, name: 'Emergency fund', icon: 'shield', priority: 'high', targetAmount: 150000, savedAmount: sum(emergency), contributions: emergency, deadline: addMonthsUtc(currentMonth, 10) },
+    { userId, name: 'Goa trip', icon: 'plane', priority: 'medium', targetAmount: 45000, savedAmount: sum(trip), contributions: trip, deadline: addMonthsUtc(currentMonth, 4) },
+    { userId, name: 'New laptop', icon: 'laptop', priority: 'low', targetAmount: 90000, savedAmount: sum(laptop), contributions: laptop, deadline: addMonthsUtc(currentMonth, 8) },
+    { userId, name: 'Bike service & gear', icon: 'car', priority: 'low', targetAmount: 18000, savedAmount: 18000, contributions: bike, status: 'completed', completedAt: addMonthsUtc(currentMonth, -3) },
+  ]);
+
   const income = docs.filter((d) => d.type === 'income').length;
   console.log(`✔ Demo account ready: ${DEMO_EMAIL} (password in server/scripts/seed.js)`);
   console.log(`  ${docs.length} transactions (${income} income, ${docs.length - income} expenses), 3 income sources`);
+  console.log(`  ${BUDGETS.length * 2} budgets over 2 months, 4 savings goals`);
 }
 
 seed()
