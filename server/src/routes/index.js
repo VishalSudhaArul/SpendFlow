@@ -9,6 +9,7 @@ import incomeRoutes from './incomeRoutes.js';
 import { budgetRoutes, goalRoutes } from './planningRoutes.js';
 import { analyticsRoutes, dashboardRoutes } from './analyticsRoutes.js';
 import aiRoutes from './aiRoutes.js';
+import simulatorRoutes from './simulatorRoutes.js';
 
 const router = Router();
 
@@ -23,5 +24,6 @@ router.use('/goals', goalRoutes);
 router.use('/dashboard', dashboardRoutes);
 router.use('/analytics', analyticsRoutes);
 router.use('/ai', aiRoutes);
+router.use('/simulator', simulatorRoutes);
 
 export default router;
