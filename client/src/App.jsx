@@ -10,6 +10,7 @@ import Register from './pages/Register.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Analytics from './pages/Analytics.jsx';
 import AICoach from './pages/AICoach.jsx';
+import Simulator from './pages/Simulator.jsx';
 import Transactions from './pages/Transactions.jsx';
 import Income from './pages/Income.jsx';
 import Budgets from './pages/Budgets.jsx';
@@ -41,6 +42,7 @@ export default function App() {
                   <Route path="income" element={<Income />} />
                   <Route path="budgets" element={<Budgets />} />
                   <Route path="goals" element={<Goals />} />
+                  <Route path="simulator" element={<Simulator />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="status" element={<SystemStatus />} />
                 </Route>

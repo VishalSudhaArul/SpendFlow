@@ -107,6 +107,11 @@ function saveBlob(blob, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+export const simulatorService = {
+  baseline: () => request({ method: 'GET', url: '/simulator/baseline' }),
+  run: (scenarios, months) => request({ method: 'POST', url: '/simulator/run', data: { scenarios, months } }),
+};
+
 export const aiService = {
   status: () => request({ method: 'GET', url: '/ai/status' }),
   chat: (message, conversationId) =>
