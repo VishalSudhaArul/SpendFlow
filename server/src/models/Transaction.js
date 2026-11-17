@@ -37,7 +37,7 @@ const transactionSchema = new mongoose.Schema(
     notes: { type: String, trim: true, maxlength: 500, default: '' },
     incomeSourceId: { type: mongoose.Schema.Types.ObjectId, ref: 'IncomeSource', default: null },
     // Where the record came from — manual entry, the AI parser (after user confirmation), or a recurring source.
-    origin: { type: String, enum: ['manual', 'ai', 'income_source', 'seed'], default: 'manual' },
+    origin: { type: String, enum: ['manual', 'ai', 'income_source', 'bill', 'seed'], default: 'manual' },
   },
   {
     timestamps: true,

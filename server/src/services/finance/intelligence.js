@@ -75,7 +75,7 @@ export function safeToSpend({
       { key: 'income_received', label: 'Income received this month', amount: roundMoney(incomeReceived) },
       { key: 'income_expected', label: 'Income still expected', amount: roundMoney(incomeExpected) },
       { key: 'spent', label: 'Already spent', amount: -roundMoney(spentSoFar) },
-      { key: 'fixed', label: 'Upcoming fixed costs', amount: -roundMoney(unpaidFixedCosts) },
+      { key: 'fixed', label: 'Upcoming bills & fixed costs', amount: -roundMoney(unpaidFixedCosts) },
       { key: 'goals', label: 'Savings goals this month', amount: -roundMoney(goalSavingsDue) },
       { key: 'buffer', label: 'Safety buffer (5%)', amount: -buffer },
       ...(cappedByBudget ? [{ key: 'budget_cap', label: 'Limited by your monthly budget', amount: roundMoney(budgetRemaining) }] : []),

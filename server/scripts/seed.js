@@ -15,7 +15,12 @@ import { Transaction } from '../src/models/Transaction.js';
 import { IncomeSource } from '../src/models/IncomeSource.js';
 import { Budget } from '../src/models/Budget.js';
 import { SavingsGoal } from '../src/models/SavingsGoal.js';
+import { Subscription } from '../src/models/Subscription.js';
+import { Bill } from '../src/models/Bill.js';
+import { Notification } from '../src/models/Notification.js';
+import { AIConversation, AIInsight } from '../src/models/AIConversation.js';
 import { hashPassword } from '../src/services/authService.js';
+import { advanceByFrequency } from '../src/utils/dates.js';
 import { addDaysUtc, addMonthsUtc, monthKey, startOfMonthUtc, todayUtc } from '../src/utils/dates.js';
 import { roundMoney } from '../src/utils/money.js';
 
@@ -72,6 +77,11 @@ async function seed() {
       IncomeSource.deleteMany({ userId: existing._id }),
       Budget.deleteMany({ userId: existing._id }),
       SavingsGoal.deleteMany({ userId: existing._id }),
+      Subscription.deleteMany({ userId: existing._id }),
+      Bill.deleteMany({ userId: existing._id }),
+      Notification.deleteMany({ userId: existing._id }),
+      AIConversation.deleteMany({ userId: existing._id }),
+      AIInsight.deleteMany({ userId: existing._id }),
     ]);
     await existing.deleteOne();
   }
@@ -184,8 +194,52 @@ async function seed() {
     { userId, name: 'Bike service & gear', icon: 'car', priority: 'low', targetAmount: 18000, savedAmount: 18000, contributions: bike, status: 'completed', completedAt: addMonthsUtc(currentMonth, -3) },
   ]);
 
+  // Subscriptions & recurring bills. Past payments become paid Bills linked to
+  // the transactions above, so history, the calendar and payments line up.
+  const RECURRING = [
+    { name: 'Flat rent', kind: 'bill', category: 'Rent & Housing', paymentMethod: 'Bank Transfer', amount: 22000 },
+    { name: 'Laptop EMI', kind: 'bill', category: 'EMI & Loans', paymentMethod: 'Bank Transfer', amount: 4500 },
+    { name: 'Electricity bill', kind: 'bill', category: 'Bills & Utilities', paymentMethod: 'UPI', amount: 1800, variableAmount: true },
+    { name: 'Airtel broadband', kind: 'bill', category: 'Bills & Utilities', paymentMethod: 'Credit Card', amount: 799 },
+    { name: 'Netflix', kind: 'subscription', category: 'Subscriptions', paymentMethod: 'Credit Card', amount: 649 },
+    { name: 'Spotify', kind: 'subscription', category: 'Subscriptions', paymentMethod: 'Credit Card', amount: 119 },
+  ];
+  const seededTx = await Transaction.find({ userId, description: { $in: RECURRING.map((r) => r.name) } }).sort({ date: 1 });
+  let billCount = 0;
+  for (const item of RECURRING) {
+    const payments = seededTx.filter((t) => t.description === item.name);
+    const last = payments.at(-1);
+    const nextDueDate = last ? advanceByFrequency(last.date, 'monthly') : addDaysUtc(today, 5);
+    const sub = await Subscription.create({ userId, billingCycle: 'monthly', reminderDaysBefore: 3, nextDueDate, ...item });
+    await Bill.insertMany(
+      payments.map((t) => ({
+        userId,
+        subscriptionId: sub._id,
+        name: item.name,
+        amount: t.amount,
+        category: item.category,
+        paymentMethod: item.paymentMethod,
+        dueDate: t.date,
+        status: 'paid',
+        paidAt: t.date,
+        paidAmount: t.amount,
+        transactionId: t._id,
+      })),
+    );
+    billCount += payments.length;
+  }
+  // A few that show every state: due soon, overdue, yearly, cancelled, one-off.
+  await Subscription.create([
+    { userId, name: 'Google One storage', kind: 'subscription', category: 'Subscriptions', paymentMethod: 'Credit Card', amount: 130, billingCycle: 'monthly', nextDueDate: addDaysUtc(today, 2) },
+    { userId, name: 'Mobile recharge', kind: 'bill', category: 'Bills & Utilities', paymentMethod: 'UPI', amount: 299, billingCycle: 'monthly', nextDueDate: addDaysUtc(today, -2) },
+    { userId, name: 'Cult gym membership', kind: 'subscription', category: 'Health & Fitness', paymentMethod: 'Debit Card', amount: 9000, billingCycle: 'yearly', nextDueDate: addDaysUtc(today, 20), reminderDaysBefore: 7 },
+    { userId, name: 'Amazon Prime', kind: 'subscription', category: 'Subscriptions', paymentMethod: 'Credit Card', amount: 1499, billingCycle: 'yearly', nextDueDate: addMonthsUtc(today, 4), status: 'cancelled', cancelledAt: addMonthsUtc(today, -1) },
+  ]);
+  await Bill.create({ userId, name: 'Car insurance renewal', amount: 12500, category: 'Other', paymentMethod: 'Net Banking', dueDate: addDaysUtc(today, 6), reminderDaysBefore: 7 });
+
   const income = docs.filter((d) => d.type === 'income').length;
   console.log(`✔ Demo account ready: ${DEMO_EMAIL} (password in server/scripts/seed.js)`);
+  console.log(`  ${RECURRING.length + 4} subscriptions/bills (${billCount} past payments linked), 1 one-off bill`);
   console.log(`  ${docs.length} transactions (${income} income, ${docs.length - income} expenses), 3 income sources`);
   console.log(`  ${BUDGETS.length * 2} budgets over 2 months, 4 savings goals`);
 }

@@ -9,6 +9,9 @@ import { healthScore, savingsRate, safeToSpend, detectUnusual } from './finance/
 import { getBudgetOverview } from './budgetService.js';
 import { monthlyEquivalent } from './incomeService.js';
 import { withProjection } from './goalService.js';
+import { ensureUpcomingBills } from './billService.js';
+import { billState, daysUntil } from './finance/recurring.js';
+import { Bill } from '../models/Bill.js';
 import {
   allTimeTotals,
   categoryMonthMatrix,
@@ -83,6 +86,7 @@ export async function getDashboard(userId) {
     recentExpenses,
     historyExpenses,
     sources,
+    unpaidBills,
   ] = await Promise.all([
     allTimeTotals(userId),
     monthlyTotals(userId, currentMonth, 6),
@@ -96,6 +100,9 @@ export async function getDashboard(userId) {
     expensesBetween(userId, addDaysUtc(today, -30), tomorrow),
     expensesBetween(userId, addDaysUtc(today, -210), addDaysUtc(today, -30)),
     IncomeSource.find({ userId, isActive: true }),
+    ensureUpcomingBills(userId).then(() =>
+      Bill.find({ userId, status: 'upcoming', dueDate: { $lt: addDaysUtc(today, 31) } }).sort({ dueDate: 1 }),
+    ),
   ]);
 
   const thisMonth = trend.at(-1);
@@ -108,11 +115,18 @@ export async function getDashboard(userId) {
   const avgMonthlyExpense = completedWithSpend.length ? average(completedWithSpend.map((m) => m.expense)) : 0;
   const avgFixedCosts = FIXED_CATEGORIES.reduce((sum, c) => sum + average(matrix[c] ?? [0]), 0);
 
-  // Fixed costs: typical month minus what has already been paid this month.
+  // Money still committed this month, per category: the larger of
+  //  (a) the typical month minus what's been paid so far (fixed categories), and
+  //  (b) unpaid bills due before month-end (including overdue ones).
+  // Taking the max (not the sum) avoids counting e.g. rent twice.
+  const billsThisMonth = unpaidBills.filter((b) => b.dueDate < monthEnd);
+  const billsByCategory = new Map();
+  for (const bill of billsThisMonth) billsByCategory.set(bill.category, (billsByCategory.get(bill.category) ?? 0) + bill.amount);
   const fixedSpentThisMonth = FIXED_CATEGORIES.reduce((sum, c) => sum + (thisMonthByCategory.get(c)?.total ?? 0), 0);
-  const unpaidFixedCosts = FIXED_CATEGORIES.reduce((sum, c) => {
-    const typical = median(matrix[c] ?? []);
-    return sum + Math.max(0, typical - (thisMonthByCategory.get(c)?.total ?? 0));
+  const committedCategories = new Set([...FIXED_CATEGORIES, ...billsByCategory.keys()]);
+  const unpaidFixedCosts = [...committedCategories].reduce((sum, c) => {
+    const fromHistory = FIXED_CATEGORIES.includes(c) ? Math.max(0, median(matrix[c] ?? []) - (thisMonthByCategory.get(c)?.total ?? 0)) : 0;
+    return sum + Math.max(fromHistory, billsByCategory.get(c) ?? 0);
   }, 0);
 
   // Goal savings still due this month: required monthly pace minus deposits made this month.
@@ -208,5 +222,13 @@ export async function getDashboard(userId) {
       .slice(0, 3)
       .map(({ contributions: _c, ...g }) => g),
     unusualExpenses: unusual,
+    upcomingBills: {
+      items: unpaidBills
+        .filter((b) => b.dueDate <= addDaysUtc(today, 14))
+        .slice(0, 6)
+        .map((b) => ({ ...b.toJSON(), state: billState(b, today), daysUntilDue: daysUntil(b.dueDate, today) })),
+      overdueCount: unpaidBills.filter((b) => b.dueDate < today).length,
+      dueThisMonth: roundMoney(billsThisMonth.reduce((s, b) => s + b.amount, 0)),
+    },
   };
 }

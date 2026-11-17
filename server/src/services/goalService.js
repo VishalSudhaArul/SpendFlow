@@ -4,6 +4,7 @@ import { findOwnedOrThrow } from '../utils/ownership.js';
 import { parseDateOnly, todayUtc } from '../utils/dates.js';
 import { roundMoney } from '../utils/money.js';
 import { goalProjection } from './finance/planning.js';
+import { notifyGoalReached } from './notificationService.js';
 
 const STATUS_ORDER = { active: 0, completed: 1, archived: 2 };
 const PRIORITY_ORDER = { high: 0, medium: 1, low: 2 };
@@ -105,6 +106,7 @@ export async function addContribution(userId, id, { amount, type, date, note }) 
   goal.savedAmount = roundMoney(goal.savedAmount + signed);
   const justCompleted = syncCompletion(goal);
   await goal.save();
+  if (justCompleted) await notifyGoalReached(userId, goal);
   return { goal: withProjection(goal), justCompleted };
 }
 

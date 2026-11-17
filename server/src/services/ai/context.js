@@ -88,6 +88,12 @@ export async function buildFinancialContext(user) {
       usualAmount: r(u.typicalAmount),
     })),
     incomeSources: sources.map((s) => ({ type: s.type, frequency: s.frequency, monthlyEquivalent: r(monthlyEquivalent(s)) })),
+    upcomingBills: dashboard.upcomingBills.items.map((b) => ({
+      bill: b.name.slice(0, 40),
+      amount: r(b.amount),
+      dueDate: new Date(b.dueDate).toISOString().slice(0, 10),
+      status: b.state,
+    })),
   };
 }
 
