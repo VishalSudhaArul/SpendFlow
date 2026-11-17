@@ -68,9 +68,16 @@ export function AuthProvider({ children }) {
 
   const changePassword = useCallback((payload) => authService.changePassword(payload), []);
 
+  // After deleting the account, a full reload onto the landing page clears every
+  // bit of in-memory state (cached lists, notifications) belonging to it.
+  const deleteAccount = useCallback(async (password) => {
+    await authService.deleteAccount(password);
+    window.location.replace('/welcome');
+  }, []);
+
   const value = useMemo(
-    () => ({ user, status, login, register, logout, updateProfile, changePassword }),
-    [user, status, login, register, logout, updateProfile, changePassword],
+    () => ({ user, status, login, register, logout, updateProfile, changePassword, deleteAccount }),
+    [user, status, login, register, logout, updateProfile, changePassword, deleteAccount],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

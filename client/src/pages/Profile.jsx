@@ -13,6 +13,7 @@ import { FormField } from '../components/ui/FormField.jsx';
 import { PasswordInput } from '../components/ui/PasswordInput.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog.jsx';
+import { DataControls } from '../components/profile/DataControls.jsx';
 
 export default function Profile() {
   const { user, logout } = useAuth();
@@ -50,7 +51,10 @@ export default function Profile() {
           </div>
         </Card>
       </div>
-      <PasswordForm />
+      <div className="space-y-6">
+        <PasswordForm />
+        <DataControls />
+      </div>
 
       <ConfirmDialog
         open={confirmLogout}
