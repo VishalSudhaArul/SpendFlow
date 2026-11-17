@@ -1,0 +1,40 @@
+# Render Blueprint for the SpendFlow AI API (https://render.com/docs/blueprint-spec).
+# Secrets use `sync: false`: Render asks for them in its dashboard and they are
+# never stored in this repository.
+services:
+  - type: web
+    name: spendflow-ai-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm ci --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DB_NAME
+        value: spendflow-ai
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN_DAYS
+        value: "7"
+      - key: COOKIE_SAME_SITE
+        value: lax
+      # Vercel rewrite -> Render load balancer
+      - key: TRUST_PROXY
+        value: "2"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.8-flash
+      - key: GEMINI_FALLBACK_MODEL
+        value: gemini-3.5-flash-lite
+      # The deployed frontend origin, e.g. https://spendflow-ai.vercel.app
+      - key: CLIENT_URL
+        sync: false

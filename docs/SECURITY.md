@@ -36,6 +36,7 @@ Paths are relative to `server/src` unless noted.
 - Helmet sets HSTS, `X-Content-Type-Options`, frame protection and a restrictive CSP on API responses; `X-Powered-By` is removed (tested).
 - CORS allows only origins listed in `CLIENT_URL`, with credentials (tested).
 - CSRF: state-changing requests must carry `X-Requested-With: SpendFlow`, which cross-site forms can't send and cross-origin scripts can't add without passing CORS (tested). Combined with `SameSite=Lax` cookies.
+- The deployed client is served with its own strict Content-Security-Policy (no third-party scripts; the single inline theme script is allowed by hash), HSTS, `X-Frame-Options: DENY` and a permissions policy (`client/vercel.json`). The client build fails if the hash no longer matches (`client/scripts/check-csp.js`).
 - The React client never uses `dangerouslySetInnerHTML`; AI replies are rendered by a tiny Markdown-to-elements renderer (`client/src/components/ai/MarkdownText.jsx`).
 
 ## Errors, logs and secrets
@@ -49,7 +50,7 @@ Paths are relative to `server/src` unless noted.
 
 - The API key is used only by `services/ai/geminiClient.js` on the server; it is never logged or returned.
 - Gemini receives a compact **aggregated** summary built by `services/ai/context.js`: no name, email, ids, tokens, passwords or transaction notes. It never queries MongoDB.
-- Prompts mark the data as data, not instructions. Replies must match a JSON schema (Zod-validated); a grounding check flags currency figures that don't trace back to the user's data. Natural-language entry only produces a **draft** the user confirms.
+- Prompts mark the data as data, not instructions. Replies must match a JSON schema (Zod-validated); a grounding check flags currency figures that don't trace back to the user's data, or that are garbled (badly grouped digits). Natural-language entry only produces a **draft** the user confirms.
 - If Gemini is unavailable or misbehaves, deterministic fallbacks answer from the same numbers. AI routes are rate-limited (15/min).
 
 ## Privacy controls for users

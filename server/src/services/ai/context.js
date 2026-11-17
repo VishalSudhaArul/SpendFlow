@@ -112,21 +112,32 @@ export function contextNumbers(context) {
 const AMOUNT_PATTERN = /(?:₹|rs\.?|inr|\$|€|£)\s?([\d,]+(?:\.\d+)?)\s*(k|l|lakh|lakhs|cr|crore)?/gi;
 const MULTIPLIERS = { k: 1e3, l: 1e5, lakh: 1e5, lakhs: 1e5, cr: 1e7, crore: 1e7 };
 
-/** Currency amounts written in a piece of text, as numbers. */
-export function extractAmounts(text) {
+// Digit grouping a real figure can have: none, international (1,234,567) or Indian (12,34,567).
+const WELL_GROUPED = /^(?:\d+|\d{1,3}(?:,\d{3})+|\d{1,2}(?:,\d{2})*,\d{3})(?:\.\d+)?$/;
+
+/** Currency amounts in a piece of text, each with whether its digits are grouped correctly. */
+function scanAmounts(text) {
   const amounts = [];
   for (const match of String(text).matchAll(AMOUNT_PATTERN)) {
-    const value = Number(match[1].replace(/,/g, ''));
-    if (!Number.isFinite(value)) continue;
-    amounts.push(value * (MULTIPLIERS[match[2]?.toLowerCase()] ?? 1));
+    const raw = match[1].replace(/,+$/, ''); // "₹4,200, then" -> "4,200"
+    const value = Number(raw.replace(/,/g, ''));
+    if (!raw || !Number.isFinite(value)) continue;
+    amounts.push({ value: value * (MULTIPLIERS[match[2]?.toLowerCase()] ?? 1), wellFormed: WELL_GROUPED.test(raw) });
   }
   return amounts;
+}
+
+/** Currency amounts written in a piece of text, as numbers. */
+export function extractAmounts(text) {
+  return scanAmounts(text).map((amount) => amount.value);
 }
 
 /**
  * Finds currency amounts in an AI reply that do not correspond to any number
  * the server provided (within 1%, or ₹1), nor to one the user typed. Simple
- * arithmetic on provided numbers (sums, differences) is accepted too.
+ * arithmetic on provided numbers (sums, differences) is accepted too. Garbled
+ * figures (a live model once wrote "₹58,39-5") are always flagged, even when
+ * their digits happen to match.
  */
 export function findUngroundedAmounts(reply, context, userText = '') {
   const known = [...contextNumbers(context), ...extractAmounts(userText)];
@@ -139,5 +150,7 @@ export function findUngroundedAmounts(reply, context, userText = '') {
     }
   }
   const matches = (value) => [...derived].some((n) => Math.abs(n - value) <= Math.max(1, n * 0.01));
-  return extractAmounts(reply).filter((value) => value >= 100 && !matches(value));
+  return scanAmounts(reply)
+    .filter(({ value, wellFormed }) => !wellFormed || (value >= 100 && !matches(value)))
+    .map(({ value }) => value);
 }

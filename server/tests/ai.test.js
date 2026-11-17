@@ -63,6 +63,17 @@ describe('grounding check', () => {
     expect(findUngroundedAmounts('Your balance is ₹3,45,000.', ctx)).toEqual([345000]);
   });
 
+  it('flags garbled figures even when the digits happen to match', () => {
+    // Seen from a live model: "₹58,39-5". Read naively it is 5,839, which can match a derived total.
+    expect(findUngroundedAmounts('You spent ₹58,39-5 so far.', ctx)).toEqual([5839]);
+    expect(findUngroundedAmounts('That is ₹1,2345 more.', ctx)).toEqual([12345]);
+  });
+
+  it('accepts international and Indian digit grouping, ranges and trailing punctuation', () => {
+    const reply = 'Balance ₹1,05,762 (₹105,762). Rent ₹22,000, food ₹4,200. Aim for ₹4,200-₹8,469.';
+    expect(findUngroundedAmounts(reply, ctx)).toEqual([]);
+  });
+
   it('collects every number from nested context', () => {
     expect(contextNumbers(ctx)).toContain(38999);
   });

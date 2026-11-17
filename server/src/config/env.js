@@ -34,6 +34,10 @@ const envSchema = z.object({
   // "lax" works when the client and API share a site (localhost, or the API proxied
   // under the frontend's domain). Use "none" only if they live on different sites.
   COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('lax'),
+  // Number of reverse proxies in front of the API in production (used to read the
+  // real client IP from X-Forwarded-For for rate limiting). Render alone = 1;
+  // Vercel rewrite -> Render = 2.
+  TRUST_PROXY: z.coerce.number().int().min(0).max(5).default(1),
   GEMINI_API_KEY: optionalSecret,
   GEMINI_MODEL: z.string().trim().min(1).default('gemini-3.8-flash'),
   // Used automatically when the primary model is overloaded, slow or unavailable.

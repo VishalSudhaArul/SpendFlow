@@ -17,9 +17,9 @@ import { ApiError } from './utils/ApiError.js';
 export function createApp() {
   const app = express();
 
-  // Behind a hosting proxy (Render/Railway) the client IP comes from X-Forwarded-For,
-  // which the rate limiter needs.
-  if (env.isProduction) app.set('trust proxy', 1);
+  // Behind hosting proxies (Render, Vercel rewrite) the client IP comes from
+  // X-Forwarded-For, which the rate limiter needs. TRUST_PROXY = number of hops.
+  if (env.isProduction && env.TRUST_PROXY > 0) app.set('trust proxy', env.TRUST_PROXY);
   app.disable('x-powered-by');
 
   app.use(helmet());
