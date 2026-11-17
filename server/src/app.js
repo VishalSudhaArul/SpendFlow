@@ -43,8 +43,10 @@ export function createApp() {
   app.use(cookieParser());
 
   if (!env.isTest) {
-    // Logs method, path, status and timing only. No bodies, no auth headers.
-    app.use(morgan(env.isProduction ? 'combined' : 'dev'));
+    // Logs method, path (query string removed — it can hold search text or
+    // dates), status and timing. Never bodies, cookies or auth headers.
+    morgan.token('path', (req) => req.originalUrl.split('?')[0]);
+    app.use(morgan(':method :path :status :response-time ms - :res[content-length]'));
   }
 
   app.use('/api', apiLimiter, csrfGuard, apiRoutes);
