@@ -107,6 +107,31 @@ function saveBlob(blob, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+export const subscriptionService = {
+  list: () => request({ method: 'GET', url: '/subscriptions' }).then((d) => d.items),
+  create: (data) => request({ method: 'POST', url: '/subscriptions', data }).then((d) => d.subscription),
+  update: (id, data) => request({ method: 'PATCH', url: `/subscriptions/${id}`, data }).then((d) => d.subscription),
+  remove: (id) => request({ method: 'DELETE', url: `/subscriptions/${id}` }),
+  history: (id) => request({ method: 'GET', url: `/subscriptions/${id}/history` }),
+};
+
+export const billService = {
+  list: (params) => request({ method: 'GET', url: '/bills', params: toQueryParams(params) }).then((d) => d.items),
+  summary: () => request({ method: 'GET', url: '/bills/summary' }),
+  create: (data) => request({ method: 'POST', url: '/bills', data }).then((d) => d.bill),
+  pay: (id, data = {}) => request({ method: 'POST', url: `/bills/${id}/pay`, data }),
+  skip: (id) => request({ method: 'POST', url: `/bills/${id}/skip` }).then((d) => d.bill),
+  reopen: (id) => request({ method: 'POST', url: `/bills/${id}/reopen` }).then((d) => d.bill),
+  remove: (id) => request({ method: 'DELETE', url: `/bills/${id}` }),
+};
+
+export const notificationService = {
+  list: (params) => request({ method: 'GET', url: '/notifications', params: toQueryParams(params) }),
+  read: (id) => request({ method: 'PATCH', url: `/notifications/${id}/read` }),
+  readAll: () => request({ method: 'POST', url: '/notifications/read-all' }),
+  remove: (id) => request({ method: 'DELETE', url: `/notifications/${id}` }),
+};
+
 export const simulatorService = {
   baseline: () => request({ method: 'GET', url: '/simulator/baseline' }),
   run: (scenarios, months) => request({ method: 'POST', url: '/simulator/run', data: { scenarios, months } }),

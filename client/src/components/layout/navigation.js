@@ -1,4 +1,4 @@
-import { Activity, ArrowLeftRight, BarChart3, FlaskConical, HandCoins, LayoutDashboard, PiggyBank, Sparkles, UserRound, WalletCards } from 'lucide-react';
+import { Activity, ArrowLeftRight, BarChart3, CalendarClock, FlaskConical, HandCoins, LayoutDashboard, PiggyBank, Sparkles, UserRound, WalletCards } from 'lucide-react';
 
 /**
  * Sidebar sections. A module is added here only when its page and API exist,
@@ -19,6 +19,7 @@ export const NAV_SECTIONS = [
     items: [
       { to: '/transactions', label: 'Transactions', icon: ArrowLeftRight },
       { to: '/income', label: 'Income', icon: HandCoins },
+      { to: '/bills', label: 'Bills & subscriptions', icon: CalendarClock },
     ],
   },
   {

@@ -2,6 +2,7 @@ import { Menu } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle.jsx';
 import { Logo } from './Logo.jsx';
 import { UserMenu } from './UserMenu.jsx';
+import { NotificationBell } from './NotificationBell.jsx';
 
 export function Topbar({ title, onOpenMenu }) {
   return (
@@ -16,10 +17,11 @@ export function Topbar({ title, onOpenMenu }) {
           <Menu className="size-5" />
         </button>
         <div className="lg:hidden">
-          <Logo />
+          <Logo compactOnMobile />
         </div>
         <h1 className="hidden text-lg font-semibold lg:block">{title}</h1>
         <div className="ml-auto flex items-center gap-2">
+          <NotificationBell />
           <ThemeToggle />
           <UserMenu />
         </div>

@@ -21,6 +21,7 @@ import { BudgetStatusBadge } from '../components/budgets/BudgetStatus.jsx';
 import { HealthScoreCard } from '../components/dashboard/HealthScoreCard.jsx';
 import { SafeToSpendCard } from '../components/dashboard/SafeToSpendCard.jsx';
 import { AISummaryCard } from '../components/dashboard/AISummaryCard.jsx';
+import { UpcomingBillsCard } from '../components/dashboard/UpcomingBillsCard.jsx';
 import { IncomeExpenseChart } from '../components/charts/IncomeExpenseChart.jsx';
 import { categoryIcon } from '../components/transactions/categoryStyles.js';
 import { GOAL_ICON_COMPONENTS } from '../components/goals/goalVisuals.js';
@@ -119,6 +120,7 @@ function DashboardContent({ data }) {
         <RecentTransactionsCard items={data.recentTransactions} money={money} />
         <BudgetsCard budgets={data.budgets} money={money} />
         <div className="space-y-6">
+          <UpcomingBillsCard upcoming={data.upcomingBills} />
           {data.unusualExpenses.length > 0 && <UnusualCard items={data.unusualExpenses} money={money} />}
           <GoalsCard goals={data.goals} money={money} />
         </div>

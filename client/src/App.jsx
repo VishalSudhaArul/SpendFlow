@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard.jsx';
 import Analytics from './pages/Analytics.jsx';
 import AICoach from './pages/AICoach.jsx';
 import Simulator from './pages/Simulator.jsx';
+import Bills from './pages/Bills.jsx';
 import Transactions from './pages/Transactions.jsx';
 import Income from './pages/Income.jsx';
 import Budgets from './pages/Budgets.jsx';
@@ -40,6 +41,7 @@ export default function App() {
                   <Route path="coach" element={<AICoach />} />
                   <Route path="transactions" element={<Transactions />} />
                   <Route path="income" element={<Income />} />
+                  <Route path="bills" element={<Bills />} />
                   <Route path="budgets" element={<Budgets />} />
                   <Route path="goals" element={<Goals />} />
                   <Route path="simulator" element={<Simulator />} />
