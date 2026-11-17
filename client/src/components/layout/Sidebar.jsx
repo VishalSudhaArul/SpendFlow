@@ -33,7 +33,7 @@ export function SidebarContent({ onNavigate }) {
                         {isActive && (
                           <span aria-hidden="true" className="absolute inset-y-2 left-0 w-1 rounded-r-full brand-gradient" />
                         )}
-                        <Icon className={cn('size-[18px]', isActive && 'text-accent')} aria-hidden="true" />
+                        <Icon className={cn('size-[18px]', isActive && 'text-accent-ink')} aria-hidden="true" />
                         {label}
                       </>
                     )}
@@ -50,7 +50,7 @@ export function SidebarContent({ onNavigate }) {
 
 export function Sidebar() {
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-border bg-surface lg:block">
+    <aside aria-label="Sidebar" className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-border bg-surface lg:block">
       <SidebarContent />
     </aside>
   );

@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '../context/auth.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 import { loginSchema } from '../utils/validation.js';
 import { applyServerErrors } from '../utils/forms.js';
 import { FormField } from '../components/ui/FormField.jsx';
@@ -11,6 +12,7 @@ import { Button } from '../components/ui/Button.jsx';
 import { Alert } from '../components/ui/Alert.jsx';
 
 export default function Login() {
+  usePageTitle('Sign in');
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -58,7 +60,7 @@ export default function Login() {
 
       <p className="mt-8 text-center text-sm text-muted">
         New to SpendFlow?{' '}
-        <Link to="/register" className="font-semibold text-accent hover:underline">
+        <Link to="/register" className="font-semibold text-accent-ink hover:underline">
           Create an account
         </Link>
       </p>

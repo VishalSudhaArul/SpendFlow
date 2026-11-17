@@ -360,7 +360,7 @@ function CategoryBudgetRow({ budget, money, onEdit, onDelete }) {
   return (
     <li className="py-4 first:pt-0 last:pb-0">
       <div className="flex items-center gap-3">
-        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
+        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-ink">
           {createElement(categoryIcon(budget.category, 'expense'), { className: 'size-[18px]', 'aria-hidden': true })}
         </span>
         <div className="min-w-0 flex-1">

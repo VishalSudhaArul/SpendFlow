@@ -4,7 +4,7 @@ import { cn } from '../../utils/cn.js';
 const TONES = {
   error: { icon: AlertTriangle, className: 'border-danger/30 bg-danger/8 text-danger' },
   success: { icon: CheckCircle2, className: 'border-success/30 bg-success/8 text-success' },
-  info: { icon: Info, className: 'border-accent/30 bg-accent-soft text-accent' },
+  info: { icon: Info, className: 'border-accent/30 bg-accent-soft text-accent-ink' },
 };
 
 export function Alert({ tone = 'error', children, className }) {

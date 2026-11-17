@@ -14,7 +14,7 @@ export function UpcomingBillsCard({ upcoming }) {
         title="Upcoming bills"
         description={upcoming.dueThisMonth ? `${money(upcoming.dueThisMonth, { decimals: 0 })} still due this month` : 'Next 14 days'}
         action={
-          <Link to="/bills" className="flex shrink-0 items-center gap-1 text-xs font-semibold text-accent hover:underline">
+          <Link to="/bills" className="flex shrink-0 items-center gap-1 text-xs font-semibold text-accent-ink hover:underline">
             See all
             <ArrowRight className="size-3.5" aria-hidden="true" />
           </Link>

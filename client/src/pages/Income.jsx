@@ -168,7 +168,7 @@ function StatCard({ icon: Icon, label, value, hint, loading }) {
   return (
     <Card className="p-4">
       <div className="flex items-center gap-2 text-sm text-muted">
-        <Icon className="size-4 text-accent" aria-hidden="true" />
+        <Icon className="size-4 text-accent-ink" aria-hidden="true" />
         {label}
       </div>
       {loading ? <Skeleton className="mt-2 h-7 w-2/3" /> : <p className="tabular mt-1.5 text-2xl font-bold">{value}</p>}

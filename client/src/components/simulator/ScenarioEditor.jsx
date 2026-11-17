@@ -37,7 +37,7 @@ export function ScenarioEditor({ scenario, index, categories, currencySymbol, on
   return (
     <li className="rounded-xl border border-border bg-surface-2/40 p-3.5">
       <div className="mb-3 flex items-center gap-2">
-        <Icon className="size-4 text-accent" aria-hidden="true" />
+        <Icon className="size-4 text-accent-ink" aria-hidden="true" />
         <p className="flex-1 text-sm font-semibold">{label}</p>
         <button type="button" onClick={onRemove} className="rounded-lg p-1.5 text-muted hover:bg-danger/10 hover:text-danger" aria-label={`Remove: ${label}`}>
           <Trash2 className="size-4" />

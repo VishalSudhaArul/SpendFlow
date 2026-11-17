@@ -208,7 +208,7 @@ export default function Simulator() {
                   <CardHeader
                     title={
                       <span className="flex items-center gap-2">
-                        <Sparkles className="size-4 text-accent" aria-hidden="true" /> What this means
+                        <Sparkles className="size-4 text-accent-ink" aria-hidden="true" /> What this means
                       </span>
                     }
                   />
@@ -218,7 +218,7 @@ export default function Simulator() {
                         {text.startsWith('⚠') ? (
                           <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
                         ) : (
-                          <ArrowRight className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden="true" />
+                          <ArrowRight className="mt-0.5 size-4 shrink-0 text-accent-ink" aria-hidden="true" />
                         )}
                         <span>{text.replace(/^⚠\s*/, '')}</span>
                       </li>
@@ -419,7 +419,7 @@ function GoalImpact({ goals, money }) {
       <CardHeader
         title={
           <span className="flex items-center gap-2">
-            <Target className="size-4 text-accent" aria-hidden="true" /> Savings goals
+            <Target className="size-4 text-accent-ink" aria-hidden="true" /> Savings goals
           </span>
         }
         description={`Your active goals need ${money(goals.requiredMonthly, { decimals: 0 })} a month`}

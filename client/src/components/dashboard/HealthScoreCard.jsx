@@ -40,7 +40,7 @@ export function HealthScoreCard({ health }) {
   return (
     <Card className="flex flex-col">
       <div className="flex items-center gap-2 text-sm font-semibold">
-        <HeartPulse className="size-4 text-accent" aria-hidden="true" />
+        <HeartPulse className="size-4 text-accent-ink" aria-hidden="true" />
         Financial health score
       </div>
 
@@ -63,7 +63,7 @@ export function HealthScoreCard({ health }) {
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="mt-4 flex items-center justify-center gap-1 text-xs font-semibold text-accent hover:underline"
+        className="mt-4 flex items-center justify-center gap-1 text-xs font-semibold text-accent-ink hover:underline"
       >
         How is this scored?
         <ChevronDown className={cn('size-3.5 transition', open && 'rotate-180')} aria-hidden="true" />

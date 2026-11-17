@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '../context/auth.js';
+import { usePageTitle } from '../hooks/usePageTitle.js';
 import { useToast } from '../context/toast.js';
 import { registerSchema } from '../utils/validation.js';
 import { applyServerErrors } from '../utils/forms.js';
@@ -12,6 +13,7 @@ import { Button } from '../components/ui/Button.jsx';
 import { Alert } from '../components/ui/Alert.jsx';
 
 export default function Register() {
+  usePageTitle('Create account');
   const { register: registerAccount } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
@@ -79,7 +81,7 @@ export default function Register() {
 
       <p className="mt-8 text-center text-sm text-muted">
         Already have an account?{' '}
-        <Link to="/login" className="font-semibold text-accent hover:underline">
+        <Link to="/login" className="font-semibold text-accent-ink hover:underline">
           Sign in
         </Link>
       </p>

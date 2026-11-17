@@ -11,13 +11,15 @@
   --border: #dfe4ef;
   --text: #0b1020;
   --muted: #5a6479;
-  --accent: #3363f2;
+  /* Text-on-fill and status colours meet WCAG AA (4.5:1) on cards and on their tinted badges. */
+  --accent: #2b55d9;
+  --accent-ink: #2b55d9;
   --accent-2: #7246f0;
-  --accent-soft: rgb(51 99 242 / 0.1);
-  --success: #0f9a4b;
-  --warning: #b97400;
-  --danger: #d93a40;
-  --ring: rgb(51 99 242 / 0.45);
+  --accent-soft: rgb(43 85 217 / 0.1);
+  --success: #036d35;
+  --warning: #8a5300;
+  --danger: #c4252c;
+  --ring: rgb(43 85 217 / 0.45);
   --shadow: 0 1px 2px rgb(15 23 42 / 0.05), 0 8px 24px -12px rgb(15 23 42 / 0.12);
   /* Chart series (fixed order, validated for colour-vision deficiency on these surfaces) */
   --series-1: #2a78d6;
@@ -34,9 +36,11 @@
   --border: #1c2540;
   --text: #e7ebf7;
   --muted: #8a94ae;
-  --accent: #4d7cff;
-  --accent-2: #8b5cf6;
-  --accent-soft: rgb(77 124 255 / 0.14);
+  /* Fills stay dark enough for white text; accent-ink is the lighter shade for accent-coloured text. */
+  --accent: #3f6ae8;
+  --accent-ink: #7d9cff;
+  --accent-2: #7c4ce8;
+  --accent-soft: rgb(63 106 232 / 0.14);
   --success: #2fcf74;
   --warning: #f2b33d;
   --danger: #ff5c63;
@@ -57,6 +61,7 @@
   --color-text: var(--text);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
   --color-accent-2: var(--accent-2);
   --color-accent-soft: var(--accent-soft);
   --color-success: var(--success);

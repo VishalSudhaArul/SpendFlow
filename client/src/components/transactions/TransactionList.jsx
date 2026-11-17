@@ -22,7 +22,7 @@ function CategoryBadge({ transaction }) {
     <span
       className={cn(
         'grid size-10 shrink-0 place-items-center rounded-xl',
-        transaction.type === 'income' ? 'bg-success/12 text-success' : 'bg-accent-soft text-accent',
+        transaction.type === 'income' ? 'bg-success/12 text-success' : 'bg-accent-soft text-accent-ink',
       )}
     >
       {createElement(categoryIcon(transaction.category, transaction.type), {

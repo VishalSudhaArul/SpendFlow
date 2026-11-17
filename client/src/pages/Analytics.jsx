@@ -261,7 +261,7 @@ function CategoryBreakdown({ categories, hasPrevious }) {
         <ul className="space-y-3.5">
           {categories.map((c) => (
             <li key={c.category} className="flex items-center gap-3">
-              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
+              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-ink">
                 {createElement(categoryIcon(c.category, 'expense'), { className: 'size-4', 'aria-hidden': true })}
               </span>
               <div className="min-w-0 flex-1">

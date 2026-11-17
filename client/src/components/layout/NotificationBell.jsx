@@ -11,7 +11,7 @@ const ICONS = {
   budget_warning: { icon: AlertTriangle, className: 'text-warning' },
   budget_over: { icon: XCircle, className: 'text-danger' },
   goal_reached: { icon: PartyPopper, className: 'text-success' },
-  unusual_expense: { icon: Info, className: 'text-accent' },
+  unusual_expense: { icon: Info, className: 'text-accent-ink' },
 };
 
 const timeAgo = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
@@ -106,7 +106,7 @@ export function NotificationBell() {
           <div className="flex items-center justify-between border-b border-border px-4 py-3">
             <p className="text-sm font-semibold">Notifications</p>
             {unread > 0 && (
-              <button type="button" onClick={markAll} className="flex items-center gap-1 text-xs font-semibold text-accent hover:underline">
+              <button type="button" onClick={markAll} className="flex items-center gap-1 text-xs font-semibold text-accent-ink hover:underline">
                 <CheckCheck className="size-3.5" aria-hidden="true" />
                 Mark all read
               </button>

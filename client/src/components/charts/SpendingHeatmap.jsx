@@ -96,7 +96,7 @@ export function SpendingHeatmap({ data }) {
         </div>
       </dl>
 
-      <div ref={scrollRef} className="overflow-x-auto pb-1">
+      <div ref={scrollRef} tabIndex={0} role="region" aria-label="Spending heatmap, scrollable" className="overflow-x-auto rounded-lg pb-1">
         <div
           role="img"
           aria-label={`Daily spending from ${formatDate(data.from)} to ${formatDate(data.to)}. ${stats.activeDays} days with spending; busiest day ${stats.busiest ? `${formatDate(stats.busiest.date)}, ${money(stats.busiest.total)}` : 'none'}.`}

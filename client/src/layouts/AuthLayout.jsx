@@ -29,7 +29,7 @@ export function AuthLayout() {
           <ul className="mt-10 space-y-6">
             {HIGHLIGHTS.map(({ icon: Icon, title, text }) => (
               <li key={title} className="flex gap-4">
-                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
+                <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-ink">
                   <Icon className="size-5" aria-hidden="true" />
                 </span>
                 <div>

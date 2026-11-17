@@ -5,7 +5,7 @@ import { useAuth } from '../../context/auth.js';
 function FullScreenLoader() {
   return (
     <div className="grid min-h-dvh place-items-center" role="status">
-      <Loader2 className="size-7 animate-spin text-accent" aria-hidden="true" />
+      <Loader2 className="size-7 animate-spin text-accent-ink" aria-hidden="true" />
       <span className="sr-only">Loading your account…</span>
     </div>
   );
@@ -18,6 +18,8 @@ export function RequireAuth() {
 
   if (status === 'loading') return <FullScreenLoader />;
   if (status === 'guest') {
+    // Visitors opening the home page see the product first; deep links go to sign-in.
+    if (location.pathname === '/') return <Navigate to="/welcome" replace />;
     return <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
   }
   return <Outlet />;

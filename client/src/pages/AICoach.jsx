@@ -88,7 +88,7 @@ export default function AICoach() {
   return (
     <div className="grid gap-6 lg:grid-cols-[260px_1fr] [&>*]:min-w-0">
       {/* Conversation list */}
-      <aside className="space-y-3">
+      <aside aria-label="Conversations" className="space-y-3">
         <Button className="w-full" onClick={() => setConversation(null)}>
           <MessageSquarePlus className="size-4" aria-hidden="true" />
           New conversation
@@ -160,7 +160,7 @@ export default function AICoach() {
         <div className="flex-1 space-y-5 overflow-y-auto px-4 py-5 sm:px-5" aria-live="polite">
           {loadingConversation ? (
             <div className="grid h-full place-items-center">
-              <Loader2 className="size-6 animate-spin text-accent" aria-label="Loading conversation" />
+              <Loader2 className="size-6 animate-spin text-accent-ink" aria-label="Loading conversation" />
             </div>
           ) : messages.length === 0 && !pending ? (
             <Welcome configured={status.data?.configured} onPick={send} />

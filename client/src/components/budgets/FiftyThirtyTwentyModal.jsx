@@ -120,7 +120,7 @@ function PlanContent({ month, money, onClose, onApplied }) {
 
       {loading && (
         <div className="grid h-48 place-items-center" role="status">
-          <Loader2 className="size-6 animate-spin text-accent" aria-hidden="true" />
+          <Loader2 className="size-6 animate-spin text-accent-ink" aria-hidden="true" />
           <span className="sr-only">Calculating plan…</span>
         </div>
       )}

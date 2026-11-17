@@ -90,7 +90,7 @@ export default function Transactions() {
             Export CSV
           </Button>
           <Button variant="secondary" onClick={() => setQuickAddOpen(true)}>
-            <Sparkles className="size-4 text-accent" aria-hidden="true" />
+            <Sparkles className="size-4 text-accent-ink" aria-hidden="true" />
             Quick add
           </Button>
           <Button onClick={() => setFormState({ open: true, transaction: null })} className="flex-1 sm:flex-none">
@@ -195,7 +195,7 @@ function TotalsStrip({ totals, loading, money, filtered }) {
   const items = [
     { label: 'Income', value: totals?.income, icon: ArrowDownLeft, tone: 'text-success bg-success/12' },
     { label: 'Expenses', value: totals?.expense, icon: ArrowUpRight, tone: 'text-danger bg-danger/12' },
-    { label: 'Net', value: totals?.net, icon: Scale, tone: 'text-accent bg-accent-soft' },
+    { label: 'Net', value: totals?.net, icon: Scale, tone: 'text-accent-ink bg-accent-soft' },
   ];
   return (
     <section aria-label={filtered ? 'Totals for current filters' : 'All-time totals'} className="grid grid-cols-3 gap-3">

@@ -2,7 +2,7 @@ import { cn } from '../../utils/cn.js';
 
 const TONES = {
   neutral: 'bg-surface-2 text-muted',
-  accent: 'bg-accent-soft text-accent',
+  accent: 'bg-accent-soft text-accent-ink',
   success: 'bg-success/12 text-success',
   warning: 'bg-warning/14 text-warning',
   danger: 'bg-danger/12 text-danger',

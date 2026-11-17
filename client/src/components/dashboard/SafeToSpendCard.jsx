@@ -18,7 +18,7 @@ export function SafeToSpendCard({ safe, daysLeft }) {
     <Card className="relative flex flex-col overflow-hidden">
       <div aria-hidden="true" className="pointer-events-none absolute -top-24 -right-20 size-64 rounded-full opacity-20 blur-3xl brand-gradient" />
       <div className="relative flex items-center gap-2 text-sm font-semibold">
-        <ShieldCheck className="size-4 text-accent" aria-hidden="true" />
+        <ShieldCheck className="size-4 text-accent-ink" aria-hidden="true" />
         Safe to spend this month
       </div>
 
@@ -43,7 +43,7 @@ export function SafeToSpendCard({ safe, daysLeft }) {
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
-            className="relative mt-4 flex items-center gap-1 self-start text-xs font-semibold text-accent hover:underline"
+            className="relative mt-4 flex items-center gap-1 self-start text-xs font-semibold text-accent-ink hover:underline"
           >
             How is this calculated?
             <ChevronDown className={cn('size-3.5 transition', open && 'rotate-180')} aria-hidden="true" />

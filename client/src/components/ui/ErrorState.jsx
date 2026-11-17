@@ -8,7 +8,7 @@ export function ErrorState({ title = 'Something went wrong', error, onRetry, cla
       <div className="mb-4 grid size-12 place-items-center rounded-2xl bg-danger/12 text-danger">
         <AlertTriangle className="size-6" aria-hidden="true" />
       </div>
-      <h3 className="text-base font-semibold">{title}</h3>
+      <p className="text-base font-semibold">{title}</p>
       {error?.message && <p className="mt-1 max-w-sm text-sm text-muted">{error.message}</p>}
       {onRetry && (
         <Button variant="secondary" className="mt-5" onClick={onRetry}>

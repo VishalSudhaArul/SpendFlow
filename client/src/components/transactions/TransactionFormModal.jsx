@@ -34,7 +34,7 @@ function DraftNotice({ draft, source }) {
   return (
     <div className={`rounded-xl border px-3.5 py-3 text-sm ${low ? 'border-warning/40 bg-warning/8' : 'border-accent/30 bg-accent-soft'}`}>
       <p className="flex items-center gap-1.5 font-semibold">
-        <Sparkles className="size-4 text-accent" aria-hidden="true" />
+        <Sparkles className="size-4 text-accent-ink" aria-hidden="true" />
         {source === 'ai' ? 'Filled in by AI' : 'Filled in from your text'} — please check every field
       </p>
       {(draft.assumptions?.length > 0 || draft.missing?.length > 0) && (

@@ -265,7 +265,7 @@ function Tile({ icon: Icon, label, value, hint, tone }) {
   return (
     <Card className="p-4">
       <div className="flex items-center gap-2 text-xs font-medium text-muted sm:text-sm">
-        <Icon className={cn('size-4', tone === 'danger' ? 'text-danger' : 'text-accent')} aria-hidden="true" />
+        <Icon className={cn('size-4', tone === 'danger' ? 'text-danger' : 'text-accent-ink')} aria-hidden="true" />
         {label}
       </div>
       {value === undefined || value === null ? <Skeleton className="mt-2 h-7 w-2/3" /> : <p className={cn('tabular mt-1.5 text-xl font-bold sm:text-2xl', tone === 'danger' && 'text-danger')}>{value}</p>}
@@ -279,7 +279,7 @@ function BillRow({ bill, money, onPay, onSkip, onReopen, onDelete }) {
   const open = bill.status === 'upcoming';
   return (
     <li className="flex flex-wrap items-center gap-3 py-3 first:pt-0 last:pb-0">
-      <span className={cn('grid size-10 shrink-0 place-items-center rounded-xl', bill.state === 'overdue' ? 'bg-danger/12 text-danger' : 'bg-accent-soft text-accent')}>
+      <span className={cn('grid size-10 shrink-0 place-items-center rounded-xl', bill.state === 'overdue' ? 'bg-danger/12 text-danger' : 'bg-accent-soft text-accent-ink')}>
         {createElement(categoryIcon(bill.category, 'expense'), { className: 'size-[18px]', 'aria-hidden': true })}
       </span>
       <div className="min-w-0 flex-1">
@@ -393,7 +393,7 @@ function SubscriptionRow({ sub, money, onEdit, onHistory, onStatus, onDelete }) 
 
   return (
     <li className={cn('flex flex-wrap items-center gap-3 py-3.5 first:pt-0 last:pb-0', sub.status !== 'active' && 'opacity-70')}>
-      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
+      <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-ink">
         {createElement(categoryIcon(sub.category, 'expense'), { className: 'size-[18px]', 'aria-hidden': true })}
       </span>
       <div className="min-w-0 flex-1">

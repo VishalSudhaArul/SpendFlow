@@ -7,7 +7,7 @@ const VARIANTS = {
   success: { icon: CheckCircle2, className: 'text-success' },
   error: { icon: XCircle, className: 'text-danger' },
   warning: { icon: AlertTriangle, className: 'text-warning' },
-  info: { icon: Info, className: 'text-accent' },
+  info: { icon: Info, className: 'text-accent-ink' },
 };
 
 const DURATION_MS = 4500;

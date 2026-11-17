@@ -71,7 +71,6 @@ export function BillCalendar({ month, onMonthChange, bills, selectedDay, onSelec
               type="button"
               onClick={() => onSelectDay(selected ? null : key)}
               aria-pressed={selected}
-              aria-label={`${day} ${formatMonthLong(month)}${dayBills.length ? `: ${dayBills.length} bill${dayBills.length > 1 ? 's' : ''}, ${money(total, { decimals: 0 })}` : ''}${isToday ? ' (today)' : ''}`}
               className={cn(
                 'flex aspect-square min-h-11 flex-col items-center justify-start rounded-lg border p-1 text-xs transition',
                 selected ? 'border-accent bg-accent-soft' : 'border-transparent hover:bg-surface-2',
@@ -79,6 +78,10 @@ export function BillCalendar({ month, onMonthChange, bills, selectedDay, onSelec
               )}
             >
               <span className={cn('tabular grid size-6 place-items-center rounded-full', isToday && 'bg-accent font-bold text-white')}>{day}</span>
+              {/* The accessible name keeps the visible day number first, then the details. */}
+              <span className="sr-only">
+                {` ${formatMonthLong(month)}${isToday ? ', today' : ''}${dayBills.length ? `, ${dayBills.length} bill${dayBills.length > 1 ? 's' : ''}, ${money(total, { decimals: 0 })}` : ''}`}
+              </span>
               {dayBills.length > 0 && (
                 <>
                   <span className="mt-0.5 flex gap-0.5" aria-hidden="true">
@@ -86,7 +89,9 @@ export function BillCalendar({ month, onMonthChange, bills, selectedDay, onSelec
                       <span key={b.id} className={cn('size-1.5 rounded-full', STATE_DOT[b.state])} />
                     ))}
                   </span>
-                  <span className="tabular mt-auto hidden text-[10px] font-medium text-muted sm:block">{money(total, { compact: true })}</span>
+                  <span className="tabular mt-auto hidden text-[10px] font-medium text-muted sm:block" aria-hidden="true">
+                    {money(total, { compact: true })}
+                  </span>
                 </>
               )}
             </button>

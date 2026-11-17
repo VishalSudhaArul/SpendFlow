@@ -162,7 +162,7 @@ function SummaryCard({ icon: Icon, label, value, hint, loading }) {
   return (
     <Card className="p-4">
       <div className="flex items-center gap-2 text-sm text-muted">
-        <Icon className="size-4 text-accent" aria-hidden="true" />
+        <Icon className="size-4 text-accent-ink" aria-hidden="true" />
         {label}
       </div>
       {loading ? <Skeleton className="mt-2 h-7 w-2/3" /> : <p className="tabular mt-1.5 text-2xl font-bold">{value}</p>}
@@ -189,7 +189,7 @@ function GoalCard({ goal, money, onAdd, onWithdraw, onEdit, onHistory, onArchive
     <li>
       <Card className={cn('flex h-full flex-col', archived && 'opacity-70')}>
         <div className="flex items-start gap-3">
-          <span className={cn('grid size-11 shrink-0 place-items-center rounded-xl', completed ? 'bg-success/12 text-success' : 'bg-accent-soft text-accent')}>
+          <span className={cn('grid size-11 shrink-0 place-items-center rounded-xl', completed ? 'bg-success/12 text-success' : 'bg-accent-soft text-accent-ink')}>
             {createElement(GOAL_ICON_COMPONENTS[goal.icon] ?? PiggyBank, { className: 'size-5', 'aria-hidden': true })}
           </span>
           <div className="min-w-0 flex-1">
@@ -256,11 +256,14 @@ function GoalCard({ goal, money, onAdd, onWithdraw, onEdit, onHistory, onArchive
             </dd>
           </div>
           {!completed && (
-            <div className="col-span-2 flex items-center gap-1.5 text-xs text-muted">
-              <TrendingUp className="size-3.5" aria-hidden="true" />
-              {goal.averageMonthly > 0
-                ? `Saving ${money(goal.averageMonthly, { decimals: 0 })}/month recently${goal.projectedCompletion ? ` · done by ${formatMonthKey(goal.projectedCompletion)}` : ''}`
-                : 'No contributions in the last 3 months'}
+            <div className="col-span-2">
+              <dt className="sr-only">Recent pace</dt>
+              <dd className="flex items-center gap-1.5 text-xs text-muted">
+                <TrendingUp className="size-3.5" aria-hidden="true" />
+                {goal.averageMonthly > 0
+                  ? `Saving ${money(goal.averageMonthly, { decimals: 0 })}/month recently${goal.projectedCompletion ? ` · done by ${formatMonthKey(goal.projectedCompletion)}` : ''}`
+                  : 'No contributions in the last 3 months'}
+              </dd>
             </div>
           )}
         </dl>

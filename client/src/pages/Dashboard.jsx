@@ -130,7 +130,7 @@ function DashboardContent({ data }) {
 }
 
 const TONE = {
-  accent: 'bg-accent-soft text-accent',
+  accent: 'bg-accent-soft text-accent-ink',
   success: 'bg-success/12 text-success',
   danger: 'bg-danger/12 text-danger',
 };
@@ -154,7 +154,7 @@ function KpiTile({ icon: Icon, label, value, hint, tone }) {
 
 function SeeAll({ to, label = 'See all' }) {
   return (
-    <Link to={to} className="flex shrink-0 items-center gap-1 text-xs font-semibold text-accent hover:underline">
+    <Link to={to} className="flex shrink-0 items-center gap-1 text-xs font-semibold text-accent-ink hover:underline">
       {label}
       <ArrowRight className="size-3.5" aria-hidden="true" />
     </Link>
@@ -213,7 +213,7 @@ function RecentTransactionsCard({ items, money }) {
       <ul className="divide-y divide-border">
         {items.map((t) => (
           <li key={t.id} className="flex items-center gap-3 py-2.5 first:pt-0 last:pb-0">
-            <span className={cn('grid size-9 shrink-0 place-items-center rounded-xl', t.type === 'income' ? 'bg-success/12 text-success' : 'bg-accent-soft text-accent')}>
+            <span className={cn('grid size-9 shrink-0 place-items-center rounded-xl', t.type === 'income' ? 'bg-success/12 text-success' : 'bg-accent-soft text-accent-ink')}>
               {createElement(categoryIcon(t.category, t.type), { className: 'size-4', 'aria-hidden': true })}
             </span>
             <div className="min-w-0 flex-1">
@@ -279,13 +279,13 @@ function GoalsCard({ goals, money }) {
       <CardHeader title="Savings goals" action={<SeeAll to="/goals" />} />
       {goals.length === 0 ? (
         <p className="text-sm text-muted">
-          No active goals. <Link to="/goals" className="font-semibold text-accent hover:underline">Create one</Link>
+          No active goals. <Link to="/goals" className="font-semibold text-accent-ink hover:underline">Create one</Link>
         </p>
       ) : (
         <ul className="space-y-4">
           {goals.map((g) => (
             <li key={g.id} className="flex items-center gap-3">
-              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent">
+              <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-ink">
                 {createElement(GOAL_ICON_COMPONENTS[g.icon] ?? PiggyBank, { className: 'size-4', 'aria-hidden': true })}
               </span>
               <div className="min-w-0 flex-1">

@@ -105,7 +105,7 @@ function GoalForm({ goal, onClose, onSaved }) {
                 onClick={() => chooseIcon(key)}
                 className={cn(
                   'grid size-10 place-items-center rounded-xl border transition',
-                  icon === key ? 'border-accent bg-accent-soft text-accent' : 'border-border text-muted hover:text-text',
+                  icon === key ? 'border-accent bg-accent-soft text-accent-ink' : 'border-border text-muted hover:text-text',
                 )}
               >
                 <Icon className="size-[18px]" aria-hidden="true" />
