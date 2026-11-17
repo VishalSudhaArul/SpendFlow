@@ -60,7 +60,7 @@ Browser ──► React SPA (Vite) ──/api──► Express API ──► Mon
 ```
 
 ```
-SpendFlow-AI/
+SpendFlow/
 ├── client/                 React 19 SPA
 │   ├── src/pages/          one lazy-loaded page per route
 │   ├── src/components/     ui/ primitives + feature components
@@ -92,8 +92,8 @@ SpendFlow-AI/
 Requirements: Node.js 20.19+ (22 LTS recommended), a free MongoDB Atlas cluster, and optionally a Gemini API key.
 
 ```powershell
-git clone https://github.com/VishalSudhaArul/SpendFlow-AI.git
-cd SpendFlow-AI
+git clone https://github.com/VishalSudhaArul/SpendFlow.git
+cd SpendFlow
 npm run install:all
 
 Copy-Item server\.env.example server\.env
@@ -209,3 +209,7 @@ See [docs/SECURITY.md](docs/SECURITY.md) for every control, how it's tested, and
 ## Disclaimer
 
 SpendFlow AI is a portfolio project. Its insights are informational and are not financial advice.
+
+## License
+
+[MIT](LICENSE)
